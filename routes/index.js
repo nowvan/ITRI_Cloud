@@ -4,8 +4,13 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
-  res.render('index', { title: '' });
+    if(req.query.id != undefined){
+        res.render('index', { id: req.query.id });
+    }else{res.render('index', { id: undefined });}
+
+
 });
+
 
 router.get('/searchbyidtime', function(req, res, next) {
 

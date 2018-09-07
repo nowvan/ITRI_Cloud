@@ -50,7 +50,15 @@
         <nav class="navbar navbar-static-top">
             <div class="container">
                 <div class="navbar-header">
-                    <a href="#" class="navbar-brand"><b>Container</b>Data</a>
+                    <a href="/" class="navbar-brand"><b>Container</b>Data</a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#navbar-collapse">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div>
+                <div class="navbar-header">
+                    <a href="#" class="navbar-brand">Device ID: <%= id%></a>
+                    <input hidden id="deviceid" name="id" value="<%= id%>">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
                             data-target="#navbar-collapse">
                         <i class="fa fa-bars"></i>
@@ -58,12 +66,12 @@
                 </div>
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse navbar-right" id="navbar-collapse">
-                    <form action="#" method="get" class="navbar-form " role="search">
+                    <form action="/" method="get" class="navbar-form" >
                         <div class="input-group">
-                            <input type="text" name="q" class="form-control" id="navbar-search-input"
+                            <input type="text" name="id" class="form-control" id="navbar-search-input"
                                    placeholder="device-id">
                             <span class="input-group-btn">
-                            <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                            <button type="submit"  id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                             </button>
                             </span>
                         </div>
@@ -94,9 +102,10 @@
                                 <input hidden name="id" value="<%= id%>">
                                 <input type="text" class="form-control pull-right" id="timeinterval" name="timeinterval" value="<%= timeinterval%>">
                                 <span class="input-group-btn">
-                                    <button type="submit"  id="searchbyidtime" class="btn btn-flat" style="background-color:#3c8dbc; color:#ffffff"><i class="fa fa-search"></i>
-                                    </button>
-                                </span>
+       <button type="submit"  id="searchbyidtime" class="btn btn-flat"
+               style="background-color:#3c8dbc; color:#ffffff"><i class="fa fa-search"></i>
+       </button>
+     </span>
                             </div>
                             <!-- /.input group -->
                         </form>
@@ -282,8 +291,8 @@
     $(function () {
         $('input[name="timeinterval"]').daterangepicker({
             timePicker: true,
-            startDate: moment().startOf('hour'),
-            endDate: moment().startOf('hour').add(16, 'hour'),
+            // startDate: moment().startOf('hour'),
+            // endDate: moment().startOf('hour').add(16, 'hour'),
             locale: {
                 format: 'YYYY-MM-DD HH:mm:ss'
             }
@@ -305,8 +314,8 @@
 
         var dataAPI = 'http://192.168.4.204:3000';
         //將資料用ajax抓取後動態顯示在前端
-        $.getJSON(dataAPI+"/getDataByPiTime",{
-            id:"b8:27:eb:e7:a3",
+        $.getJSON(dataAPI+"/getDataByIdTime",{
+            id:$("#deviceid").val(),
             timestampstart:$( "#timeinterval" ).val().slice(0,19),
             timestampend:$( "#timeinterval" ).val().slice(22,46)
         }, function (data) {
@@ -349,191 +358,6 @@
             // This will get the first returned node in the jQuery collection.
             window.myLine = new Chart(ChartCanvas,chartDataOption);
         })
-
-
-
-
-
-        // $( "#searchbyidtime" ).click(function() {
-        //     console.log( $( "#timeinterval" ).val().slice(0,19) +"a"+$( "#timeinterval" ).val().slice(22,46));
-        //     $.getJSON(dataAPI+"/getDataByPiTime",{
-        //         id:"b8:27:eb:e7:a3",
-        //         timestampstart:$( "#timeinterval" ).val().slice(0,19),
-        //         timestampend:$( "#timeinterval" ).val().slice(22,46)
-        //     }, function (data) {
-        //          console.log(data);
-        //
-        //         for (var k in data) {
-        //             // console.log(k, data[k]);
-        //             dataSet.push([data[k].pi_mac, data[k].timestamp, Number(data[k].lat) + 0.394613, Number(data[k].lng) + 0.229376, data[k].temperature, data[k].humidity]);
-        //             labels.push(data[k].timestamp);
-        //             temperatures.push(data[k].temperature);
-        //             humiditys.push(data[k].humidity);
-        //         }
-        //         // console.log(dataSet)
-        //
-        //         table.destroy();
-        //         $(document).ready(function () {
-        //             table = $('#datatable').DataTable({
-        //                 data: dataSet,
-        //                 columns: [
-        //                     {title: "pi_mac"},
-        //                     {title: "timestamp"},
-        //                     {title: "lat"},
-        //                     {title: "lng"},
-        //                     {title: "temperature"},
-        //                     {title: "humidity"}
-        //                 ]
-        //             });
-        //         });
-        //
-        //         initMap(dataSet)
-        //
-        //         function initMap(dataSet) {
-        //             var myLatLng = {lat: 24.987088, lng: 121.573474};
-        //
-        //             var map = new google.maps.Map(document.getElementById('map'), {
-        //                 zoom: 20,
-        //                 center: myLatLng
-        //             });
-        //             setMarkers(map, dataSet)
-        //         }
-        //
-        //         function setMarkers(map, _dataSet) {
-        //
-        //
-        //             var marker, i
-        //
-        //
-        //             for (i = 0; i < _dataSet.length; i++) {
-        //                 doSetTimeout(i);
-        //             }
-        //
-        //             function doSetTimeout(i) {
-        //                 setTimeout(function () {
-        //                     var timestamp = _dataSet[i][1]
-        //                     var lat = _dataSet[i][2]
-        //                     var long = _dataSet[i][3]
-        //
-        //                     latlngset = new google.maps.LatLng(lat, long);
-        //
-        //                     marker = new google.maps.Marker({
-        //                         map: map,
-        //                         title: timestamp,
-        //                         position: latlngset,
-        //                         animation: google.maps.Animation.DROP,
-        //                     });
-        //                     map.setCenter(marker.getPosition())
-        //
-        //                     var content = '</h3>' + "timestamp: " + timestamp + '</h3>';
-        //
-        //                     var infowindow = new google.maps.InfoWindow()
-        //
-        //                     google.maps.event.addListener(marker, 'mouseover', (function (marker, content, infowindow) {
-        //                         return function () {
-        //                             infowindow.setContent(content);
-        //                             infowindow.open(map, marker);
-        //                             toggleBounce(marker)
-        //                         };
-        //                     })(marker, content, infowindow));
-        //
-        //                     google.maps.event.addListener(marker, 'mouseout', (function (marker, content, infowindow) {
-        //                         return function () {
-        //                             infowindow.close(map, marker);
-        //                             toggleBounce(marker)
-        //                         };
-        //                     })(marker, content, infowindow));
-        //                 }, i * 100);
-        //             }
-        //
-        //
-        //         }
-        //
-        //         //製造跳動效果 暫時沒用
-        //         function toggleBounce(marker) {
-        //             if (marker.getAnimation() !== null) {
-        //                 marker.setAnimation(null);
-        //             } else {
-        //                 marker.setAnimation(google.maps.Animation.BOUNCE);
-        //             }
-        //         }
-        //
-        //
-        //         var chartData = {
-        //             labels: labels,
-        //             datasets: [{
-        //                 label: 'temperature',
-        //                 yAxisID: 'temperature',
-        //                 fill: false,
-        //                 // backgroundColor: 'rgba(255, 127, 80,0.3)',
-        //                 borderColor: "rgba(255, 127, 80,0.5)",
-        //                 data: temperatures
-        //
-        //             }, {
-        //                 label: 'humidity',
-        //                 yAxisID: 'humidity',
-        //                 fill: false,
-        //                 // backgroundColor: 'rgba(30, 144, 255,0.3)',
-        //                 borderColor: 'rgba(30, 144, 255,0.5)',
-        //                 data: humiditys
-        //
-        //             }],
-        //         }
-        //
-        //         var chartOption = {
-        //             responsive: true,
-        //             title: {
-        //                 display: true,
-        //                 text: 'Chart.js Line Chart'
-        //             },
-        //             tooltips: {
-        //                 mode: 'index',
-        //                 intersect: false,
-        //             },
-        //             hover: {
-        //                 mode: 'nearest',
-        //                 intersect: true
-        //             },
-        //             scales: {
-        //                 yAxes: [{
-        //                     id: 'temperature',
-        //                     type: 'linear',
-        //                     position: 'left',
-        //                     ticks: {
-        //                         max: 30,
-        //                         min: 20
-        //                     }
-        //                 }, {
-        //                     id: 'humidity',
-        //                     type: 'linear',
-        //                     position: 'right',
-        //                     ticks: {
-        //                         max: 40,
-        //                         min: 30
-        //                     }
-        //                 }]
-        //             }
-        //
-        //         };
-        //
-        //         // Get context with jQuery - using jQuery's .get() method.
-        //         var ChartCanvas = $('#areaChart').get(0).getContext('2d')
-        //         // This will get the first returned node in the jQuery collection.
-        //         new Chart(ChartCanvas,{
-        //             type: 'line',
-        //             data: chartData,
-        //             options: chartOption
-        //         })
-        //         // chart.Line(chartData)
-        //     });
-        //
-        //
-        //
-        //
-        // });
-
-
-
 
 
     });
