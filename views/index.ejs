@@ -56,26 +56,27 @@
                         <i class="fa fa-bars"></i>
                     </button>
                 </div>
-                <div class="navbar-header">
-                    <a href="#" class="navbar-brand">Device ID: <%= id%></a>
+                <div class="navbar-collapse collapse" id="navbar-collapse">
+                    <ul hidden id="hiddenid" class="nav navbar-nav">
+                        <li><a href="#" class="navbar">Device ID: <%= id%></a></li>
+                    </ul>
                     <input hidden id="deviceid" name="id" value="<%= id%>">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                            data-target="#navbar-collapse">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                </div>
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse navbar-right" id="navbar-collapse">
-                    <form action="/" method="get" class="navbar-form" >
-                        <div class="input-group">
-                            <input type="text" name="id" class="form-control" id="navbar-search-input"
-                                   placeholder="device-id">
-                            <span class="input-group-btn">
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class=""><a href="/registerid" class="navbar">Register ID</a></li>
+                    </ul>
+
+                        <form action="/" method="get" class="navbar-form navbar-right" >
+                            <div class="input-group">
+                                <input type="text" name="id" class="form-control" id="navbar-search-input"
+                                       placeholder="device-id">
+                                <span class="input-group-btn">
                             <button type="submit"  id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                             </button>
                             </span>
-                        </div>
-                    </form>
+                            </div>
+                        </form>
                 </div>
                 <!-- /.navbar-collapse -->
             </div>
@@ -275,7 +276,7 @@
                     type: 'linear',
                     position: 'right',
                     ticks: {
-                        max: 40,
+                        max: 50,
                         min: 30
                     }
                 }]
@@ -297,6 +298,11 @@
             }
         });
         console.log($("#timeinterval").val().toString());
+        console.log($("#deviceid").val());
+        if( $("#deviceid").val() != "" &&  $("#deviceid").val() != undefined ){
+            $("#hiddenid").show();
+        }
+
     });
 
     $(function () {
@@ -414,7 +420,7 @@
             });
 
 
-        },10000)
+        },3000)
 
 
 

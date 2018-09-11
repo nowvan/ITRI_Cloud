@@ -4,9 +4,8 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
-    if(req.query.id != undefined){
-        res.render('index', { id: req.query.id });
-    }else{res.render('index', { id: undefined });}
+    res.render('index', { id: req.query.id });
+
 
 
 });
@@ -17,6 +16,11 @@ router.get('/searchbyidtime', function(req, res, next) {
     console.log(req.query)
     res.render('searchbyidtime', { id: req.query.id,
         timeinterval: req.query.timeinterval });
+});
+
+router.get('/registerid', function(req, res, next) {
+
+    res.render('registerid', { });
 });
 
 
