@@ -5,9 +5,6 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
 
     res.render('index', { id: req.query.id });
-
-
-
 });
 
 
@@ -21,6 +18,13 @@ router.get('/searchbyidtime', function(req, res, next) {
 router.get('/registerid', function(req, res, next) {
 
     res.render('registerid', { });
+});
+
+
+router.get('/manager',function(req, res , next){
+
+    res.render('manager',{   });
+
 });
 
 
