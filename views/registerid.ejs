@@ -18,16 +18,22 @@
     <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.js"></script>
     <script type="text/javascript" src="bower_components/moment/moment.js"></script>
-    <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.3/daterangepicker.js"></script>
-    <link rel="stylesheet" type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.3/daterangepicker.css"/>
-    <script type="text/javascript" src="bower_components/DataTables/datatables.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="bower_components/DataTables/datatables.min.css"/>
+    <script type="text/javascript" src="bower_components/daterangepicker/daterangepicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="bower_components/daterangepicker/daterangepicker.css"/>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+    <script type="text/javascript" src="bower_components/DataTables/datatables.min.js"></script>
+    <script type="text/javascript" src="bower_components/DataTables/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="bower_components/DataTables/dataTables.rowReorder.min.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="bower_components/DataTables/datatables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="bower_components/DataTables/responsive.dataTables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="bower_components/DataTables/rowReorder.dataTables.min.css"/>
+
+    <script type="text/javascript" src="bower_components/chart/Chart.js"></script>
 
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
@@ -60,6 +66,7 @@
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <ul class="nav navbar-nav navbar-right">
                         <li class=""><a href="/registerid" class="navbar">Register ID</a></li>
+                        <li class=""><a href="/manager" class="navbar">Manager</a></li>
                     </ul>
                     <form action="/" method="get" class="navbar-form navbar-right" >
                         <div class="input-group">
