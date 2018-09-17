@@ -65,7 +65,7 @@
                 <div class="navbar-collapse collapse" id="navbar-collapse">
                     <ul hidden id="hiddenid" class="nav navbar-nav">
                         <li><a href="#" class="navbar">Device ID: <%= id%></a></li>
-                        <li class=""><a href="/manager" class="navbar">Manager</a></li>
+                        <li class=""><a href="/" class="navbar">Manager</a></li>
                     </ul>
                     <input hidden id="deviceid" name="id" value="<%= id%>">
 
@@ -74,7 +74,7 @@
                         <li class=""><a href="/registerid" class="navbar">Register ID</a></li>
                     </ul>
 
-                    <form action="/" method="get" class="navbar-form navbar-right" >
+                    <form action="/searchbyid" method="get" class="navbar-form navbar-right" >
                         <div class="input-group">
                             <input type="text" name="id" class="form-control" id="navbar-search-input"
                                    placeholder="device-id">
