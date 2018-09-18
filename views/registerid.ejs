@@ -51,6 +51,17 @@
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
 
 <body class="hold-transition skin-blue layout-top-nav">
+
+
+<div class="modal fade" id="waitＭodal" tabindex="-1" role="dialog">
+    <div style="width: 200px;height:20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%;margin-left:-100px;margin-top:-10px">
+        <div class="progress progress-striped active" style="margin-bottom: 0;">
+            <div class="progress-bar" style="width: 100%;"></div>
+        </div>
+        <h5 style="color:black"> <strong>註冊已送出 <br>部署合約概需花費1-2分鐘<br>請稍等！</strong> </h5>
+    </div>
+</div>
+
 <div class="wrapper">
     <header class="main-header">
         <nav class="navbar navbar-static-top">
@@ -95,9 +106,9 @@
                 <div class="login-box-body">
                     <p class="login-box-msg">註冊id，將會有對應的地址產生</p>
 
-                    <form action="../../index2.html" method="post">
+                    <!--<form action="" method="">-->
                         <div class="form-group has-feedback">
-                            <input type="test" class="form-control" placeholder="Device ID">
+                            <input type="test" class="form-control" id="inputID" placeholder="Device ID">
                             <!--<span class="glyphicon glyphicon-envelope form-control-feedback"></span>-->
                         </div>
                         <div class="row">
@@ -106,11 +117,11 @@
                             </div>
                             <!-- /.col -->
                             <div class="col-xs-4">
-                                <button type="submit" class="btn btn-primary btn-block btn-flat">Send</button>
+                                <button type="submit" onclick="createNew()" class="btn btn-primary btn-block btn-flat">Send</button>
                             </div>
                             <!-- /.col -->
                         </div>
-                    </form>
+                    <!--</form>-->
 
                 </div>
                 <!-- /.login-box-body -->
@@ -125,8 +136,34 @@
 </div>
 
 
-<!-- ./wrapper -->
 
+
+<script>
+
+function createNew() {
+
+    $("#waitＭodal").modal({backdrop: 'static'});
+
+    $.ajax({
+        type: "post",
+        url: 'http://192.168.4.204:3000/CreateNew',
+        async: true, // 使用非同步方式
+        // 1 需要使用JSON.stringify 否则格式为 a=2&b=3&now=14...
+        // 2 需要强制类型转换，否则格式为 {"a":"2","b":"3"}
+        data: JSON.stringify({
+            inputID: $('#inputID').val()
+        }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data) {
+            alert(data);
+            $("#waitＭodal").modal('hide')
+        } // 注意不要在此行增加逗号
+    });
+
+}
+
+</script>
 
 <!-- jQuery 3 -->
 <!-- <script src="bower_components/jquery/dist/jquery.min.js"></script> -->
