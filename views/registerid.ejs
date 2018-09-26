@@ -5,53 +5,33 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Container Data</title>
-    <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
-    <!-- Ionicons -->
     <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
-    <!-- Theme style -->
     <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
-    <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
-
     <script type="text/javascript" src="javascripts/jquery-3.2.1.min.js"></script>
+    <!--選取範圍日期用套件-->
     <script type="text/javascript" src="bower_components/moment/moment.js"></script>
     <script type="text/javascript" src="bower_components/daterangepicker/daterangepicker.js"></script>
     <link rel="stylesheet" type="text/css" href="bower_components/daterangepicker/daterangepicker.css"/>
-
+    <!--呈現資料表套件-->
     <script type="text/javascript" src="bower_components/DataTables/datatables.min.js"></script>
     <script type="text/javascript" src="bower_components/DataTables/dataTables.responsive.min.js"></script>
     <script type="text/javascript" src="bower_components/DataTables/dataTables.rowReorder.min.js"></script>
-
-
     <link rel="stylesheet" type="text/css" href="bower_components/DataTables/datatables.min.css"/>
     <link rel="stylesheet" type="text/css" href="bower_components/DataTables/responsive.dataTables.min.css"/>
     <link rel="stylesheet" type="text/css" href="bower_components/DataTables/rowReorder.dataTables.min.css"/>
-
+    <!--呈現圖表套件-->
     <script type="text/javascript" src="bower_components/chart/Chart.js"></script>
 
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-    <style>
-        .gm-style-iw + div {
-            display: none;
-        }
-
-        .gm-style-iw {
-            text-align: center;
-        }
-    </style>
 
 </head>
-<!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
 
 <body class="hold-transition skin-blue layout-top-nav">
-
 
 <div class="modal fade" id="waitＭodal" tabindex="-1" role="dialog">
     <div style="width: 200px;height:20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%;margin-left:-100px;margin-top:-10px">
@@ -63,22 +43,23 @@
 </div>
 
 <div class="wrapper">
+    <!--網頁最頂端navbar部分-->
     <header class="main-header">
         <nav class="navbar navbar-static-top">
             <div class="container">
                 <div class="navbar-header">
                     <a href="/" class="navbar-brand"><b>Container</b>Data</a>
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                            data-target="#navbar-collapse">
+                    <!--操縱navbar的RWD效果-->
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
                         <i class="fa fa-bars"></i>
                     </button>
                 </div>
                 <div class="navbar-collapse collapse" id="navbar-collapse">
-                    <!-- Collect the nav links, forms, and other content for toggling -->
                     <ul class="nav navbar-nav navbar-right">
-                        <li class=""><a href="/registerid" class="navbar">Register ID</a></li>
-                        <li class=""><a href="/" class="navbar">Manager</a></li>
+                        <li ><a href="/registerid" class="navbar">Register ID</a></li>
+                        <li ><a href="/" class="navbar">Manager</a></li>
                     </ul>
+                    <!--搜尋device id功能-->
                     <form action="/searchbyid" method="get" class="navbar-form navbar-right" >
                         <div class="input-group">
                             <input type="text" name="id" class="form-control" id="navbar-search-input"
@@ -90,52 +71,33 @@
                         </div>
                     </form>
                 </div>
-                <!-- /.navbar-collapse -->
             </div>
-            <!-- /.container-fluid -->
         </nav>
     </header>
-    <!-- Full Width Column -->
+
     <div class="content-wrapper">
         <div class="container">
             <div class="login-box">
                 <div class="login-logo">
                     <a href="/"><b>Register</b>ID</a>
                 </div>
-                <!-- /.login-logo -->
                 <div class="login-box-body">
                     <p class="login-box-msg">註冊id，將會有對應的地址產生</p>
-
-                    <!--<form action="" method="">-->
                         <div class="form-group has-feedback">
                             <input type="test" class="form-control" id="inputID" placeholder="Device ID">
-                            <!--<span class="glyphicon glyphicon-envelope form-control-feedback"></span>-->
                         </div>
                         <div class="row">
                             <div class="col-xs-8">
-
                             </div>
-                            <!-- /.col -->
                             <div class="col-xs-4">
                                 <button type="submit" onclick="createNew()" class="btn btn-primary btn-block btn-flat">Send</button>
                             </div>
-                            <!-- /.col -->
                         </div>
-                    <!--</form>-->
-
                 </div>
-                <!-- /.login-box-body -->
             </div>
-            <!-- /.login-box -->
-
-
         </div>
-        <!-- /.container -->
     </div>
-    <!-- /.content-wrapper -->
 </div>
-
-
 
 
 <script>
@@ -144,12 +106,13 @@ function createNew() {
 
     $("#waitＭodal").modal({backdrop: 'static'});
 
+    var dataAPI = 'http://140.119.163.199:3000';
+
+    //創建新合約成功回傳後才能夠繼續操作
     $.ajax({
         type: "post",
-        url: 'http://192.168.4.204:3000/CreateNew',
-        async: true, // 使用非同步方式
-        // 1 需要使用JSON.stringify 否则格式为 a=2&b=3&now=14...
-        // 2 需要强制类型转换，否则格式为 {"a":"2","b":"3"}
+        url: dataAPI+'/CreateNew',
+        async: true,
         data: JSON.stringify({
             inputID: $('#inputID').val()
         }),
@@ -158,24 +121,16 @@ function createNew() {
         success: function(data) {
             alert(data);
             $("#waitＭodal").modal('hide')
-        } // 注意不要在此行增加逗号
+        }
     });
-
 }
 
-</script>
 
-<!-- jQuery 3 -->
-<!-- <script src="bower_components/jquery/dist/jquery.min.js"></script> -->
-<!-- Bootstrap 3.3.7 -->
+</script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- SlimScroll -->
 <script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
 <script src="bower_components/fastclick/lib/fastclick.js"></script>
-<!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
 
 </body>
