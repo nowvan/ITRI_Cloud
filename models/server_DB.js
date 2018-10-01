@@ -41,8 +41,9 @@ class ServerDB{
             obj.Contract_Address = address;
 
             console.log(obj);
-            request.post({url:"http://localhost:3000/save", form: {data:JSON.stringify(obj)}}, function(err,httpResponse,body){
-                    console.log(obj);
+            request.post({url:"http://140.119.163.196:3000/save", form: {data:JSON.stringify(obj)}}, function(err,httpResponse,body){
+                console.log(obj);
+                console.log(body);
             })
             index = sensorContract.getPresentState.call();
             console.log(`last index:  ${index}`);
