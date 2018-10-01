@@ -24,6 +24,10 @@ router.get('/',function(req, res , next){
     res.render('manager',{  });
 });
 
+router.get('/manager',function(req, res , next){
+    res.render('manager',{  });
+});
+
 router.get('/container', function(req, res, next) {
     console.log(req.query);
 
@@ -35,7 +39,6 @@ router.get('/container', function(req, res, next) {
         res.render('index', { id: req.query.id });
     }
 });
-
 
 router.get('/registerid', function(req, res, next) {
     res.render('registerid', { });
