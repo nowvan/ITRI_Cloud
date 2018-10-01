@@ -14,25 +14,28 @@ let backend = new Backend();
 router.post('/CreateNew',createNew.create);
 router.post('/startWatch',serverDB.startWatch);
 router.post('/stopWatch',serverDB.stopWatch)
-router.get('/getDataById',backend.getDataById);
-router.get('/getDataByIdTime',backend.getDataByIdTime);
+router.get('/api/container/dates',backend.getDataById);
+// router.get('/getDataByIdTime',backend.getDataByIdTime);
 router.post('/save',backend.save);
-router.get('/containerlist',backend.containerlist);
+router.get('/api/containerlist',backend.containerlist);
 
 //router for web
 router.get('/',function(req, res , next){
     res.render('manager',{  });
 });
 
-router.get('/searchbyid', function(req, res, next) {
-    res.render('index', { id: req.query.id });
+router.get('/container', function(req, res, next) {
+    console.log(req.query);
+
+    if(req.query.timeinterval){
+        res.render('searchbyidtime', { id: req.query.id,
+            timeinterval: req.query.timeinterval });
+    }
+    else{
+        res.render('index', { id: req.query.id });
+    }
 });
 
-router.get('/searchbyidtime', function(req, res, next) {
-    console.log(req.query)
-    res.render('searchbyidtime', { id: req.query.id,
-        timeinterval: req.query.timeinterval });
-});
 
 router.get('/registerid', function(req, res, next) {
     res.render('registerid', { });

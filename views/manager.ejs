@@ -51,7 +51,7 @@
                         <li ><a href="/" class="navbar">Manager</a></li>
                     </ul>
                     <!--搜尋device id功能-->
-                    <form action="/searchbyid" method="get" class="navbar-form navbar-right" >
+                    <form action="/container" method="get" class="navbar-form navbar-right" >
                         <div class="input-group">
                             <input type="text" name="id" class="form-control" id="navbar-search-input"
                                    placeholder="device-id">
@@ -153,14 +153,14 @@
         var listSet = [];
 
         //將資料用ajax抓取後動態顯示在前端
-        $.getJSON(dataAPI+"/containerlist", function (data) {
+        $.getJSON(dataAPI+"/api/containerlist", function (data) {
 
             console.log(data);
 
             // 將資料整理成理想中的型態
             for (var k in data) {
                 // console.log(k, data[k]);
-                listSet.push([`<a href="/searchbyid?id=${data[k].Id}" >${data[k].Id}</a>`,`<a href="/searchbyid?id=${data[k].Id}" >${data[k].Contract_Address}</a>` ,`<button class="btn btn-primary" onclick="triggerStart('${data[k].Contract_Address}')">Start</button>`,`<button class="btn btn-primary" onclick="triggerStop('${data[k].Contract_Address}')">Stop</button>`]);
+                listSet.push([`<a href="/container?id=${data[k].Id}" >${data[k].Id}</a>`,`<a href="/container?id=${data[k].Id}" >${data[k].Contract_Address}</a>` ,`<button class="btn btn-primary" onclick="triggerStart('${data[k].Contract_Address}')">Start</button>`,`<button class="btn btn-primary" onclick="triggerStop('${data[k].Contract_Address}')">Stop</button>`]);
             }
             // console.log(dataSet)
 

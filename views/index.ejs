@@ -66,7 +66,7 @@
                         <li ><a href="/" class="navbar">Manager</a></li>
                     </ul>
                     <!--搜尋device id功能-->
-                    <form action="/searchbyid" method="get" class="navbar-form navbar-right" >
+                    <form action="/container" method="get" class="navbar-form navbar-right" >
                         <div class="input-group">
                             <input type="text" name="id" class="form-control" id="navbar-search-input"
                                    placeholder="device-id">
@@ -92,7 +92,7 @@
                 </div>
                 <div class="box-body">
                     <div class="form-group">
-                        <form action="/searchbyidtime" method="get" >
+                        <form action="/container" method="get" >
                             <div class="input-group">
                                 <div class="input-group-addon">
                                     <i class="fa fa-clock-o"></i>
@@ -100,7 +100,7 @@
                                 <input hidden name="id" value="<%= id%>">
                                 <input type="text" class="form-control pull-right" id="timeinterval" name="timeinterval">
                                 <span class="input-group-btn">
-                                <button type="submit"  id="searchbyidtime" class="btn btn-flat"
+                                <button type="submit"  id="" class="btn btn-flat"
                                         style="background-color:#3c8dbc; color:#ffffff"><i class="fa fa-search"></i>
                                 </button>
                               </span>
@@ -304,7 +304,7 @@
         var dataAPI = 'http://140.119.163.196:3000';
 
         //將資料用ajax抓取後資料動態顯示在前端
-        $.getJSON(dataAPI+"/getDataById",{id:$("#deviceid").val()}, function (data) {
+        $.getJSON(dataAPI+"/api/container/dates",{id:$("#deviceid").val()}, function (data) {
 
             console.log(data);
             for (var k in data) {
@@ -350,7 +350,7 @@
         //檢查是否有新的資料到資料庫裡
         setInterval(function () {
             // console.table(dataSet)
-            $.getJSON(dataAPI+"/getDataById",{id:$("#deviceid").val()}, function (data) {
+            $.getJSON(dataAPI+"/api/container/dates",{id:$("#deviceid").val()}, function (data) {
                 console.log(data);
 
                 for (var v of data){

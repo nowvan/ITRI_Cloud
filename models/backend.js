@@ -4,67 +4,86 @@ const mysql=require('mysql');
 class backend{
 
     getDataById(req, res, next) {
-        // console.log(req.query);
+         console.log(req.query);
         let conn=mysql.createConnection({
             host:"127.0.0.1",
             user:"pi",
             password:"nccutest",
             database:"ITRIProject"
         });
+        // console.log(req.query.timestampstart);
+        if(req.query.timestampstart){
+            conn.connect(function(err){
 
-        conn.connect(function(err){
-            console.log(req.query.id);
-            if(!err){
-                if(req.query.id != undefined && req.query.id != ""){
-                    let sql=`SELECT * FROM container WHERE id = '${req.query.id}'`;
+                if(!err){
+                    let sql=`SELECT * FROM container WHERE id = '${req.query.id}' AND timestamp BETWEEN '${req.query.timestampstart}' AND '${req.query.timestampend}' `;
                     conn.query(sql,function(err,ressql){
                         if(!err){
-                            //console.log(ressql);
+                            console.log("ressql: "+ressql);
                             res.send(JSON.stringify(ressql));
+
                         }
+                        else{
+                            console.log(err);
+                        }
+                        conn.end();
                     });
                 }
-                else{
-                    let sql="SELECT * FROM `container` WHERE 1";
-                    conn.query(sql,function(err,ressql){
-                        if(!err){
-                            //console.log(ressql);
-                            res.send(JSON.stringify(ressql));
-                        }
-                    });
-                }
-                conn.end();
-            }
-        });
-    }
-
-    getDataByIdTime(req, res, next) {
-        // console.log(req.query);
-        let conn=mysql.createConnection({
-            host:"127.0.0.1",
-            user:"pi",
-            password:"nccutest",
-            database:"ITRIProject"
-        });
-
-        conn.connect(function(err){
-
-            if(!err){
-                let sql=`SELECT * FROM container WHERE id = '${req.query.id}' AND timestamp BETWEEN '${req.query.timestampstart}' AND '${req.query.timestampend}' `;
-                conn.query(sql,function(err,ressql){
-                    if(!err){
-                        console.log("ressql: "+ressql);
-                        res.send(JSON.stringify(ressql));
-
+            });
+        }else{
+            conn.connect(function(err){
+                console.log(req.query.id);
+                if(!err){
+                    if(req.query.id != undefined && req.query.id != ""){
+                        let sql=`SELECT * FROM container WHERE id = '${req.query.id}'`;
+                        conn.query(sql,function(err,ressql){
+                            if(!err){
+                                //console.log(ressql);
+                                res.send(JSON.stringify(ressql));
+                            }
+                        });
                     }
                     else{
-                        console.log(err);
+                        let sql="SELECT * FROM `container` WHERE 1";
+                        conn.query(sql,function(err,ressql){
+                            if(!err){
+                                //console.log(ressql);
+                                res.send(JSON.stringify(ressql));
+                            }
+                        });
                     }
                     conn.end();
-                });
-            }
-        });
+                }
+            });
+        }
     }
+
+    // getDataByIdTime(req, res, next) {
+    //     // console.log(req.query);
+    //     let conn=mysql.createConnection({
+    //         host:"127.0.0.1",
+    //         user:"pi",
+    //         password:"nccutest",
+    //         database:"ITRIProject"
+    //     });
+    //     conn.connect(function(err){
+    //
+    //         if(!err){
+    //             let sql=`SELECT * FROM container WHERE id = '${req.query.id}' AND timestamp BETWEEN '${req.query.timestampstart}' AND '${req.query.timestampend}' `;
+    //             conn.query(sql,function(err,ressql){
+    //                 if(!err){
+    //                     console.log("ressql: "+ressql);
+    //                     res.send(JSON.stringify(ressql));
+    //
+    //                 }
+    //                 else{
+    //                     console.log(err);
+    //                 }
+    //                 conn.end();
+    //             });
+    //         }
+    //     });
+    // }
 
     containerlist(req, res, next) {
         // console.log(req.query);
