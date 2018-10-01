@@ -297,7 +297,7 @@
         var temperatures = [];
         var humiditys = [];
 
-        var dataAPI = 'http://localhost:3000/';
+        var dataAPI = 'http://localhost:3000';
         //將資料用ajax抓取後動態顯示在前端
         $.getJSON(dataAPI+"/getDataByIdTime",{
             id:$("#deviceid").val(),

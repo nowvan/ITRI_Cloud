@@ -301,7 +301,7 @@
         var tmptemperatures = [];
         var tmphumiditys = [];
 
-        var dataAPI = 'http://localhost:3000/';
+        var dataAPI = 'http://localhost:3000';
 
         //將資料用ajax抓取後資料動態顯示在前端
         $.getJSON(dataAPI+"/getDataById",{id:$("#deviceid").val()}, function (data) {
