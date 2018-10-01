@@ -15,6 +15,12 @@ var address_main = "0x4ed0b48c96e2502998e70a7d6b1ed8dddc95ff86";
 var con = web3.eth.contract(abi).at(address_main);
 
 var account_one = web3.eth.accounts[0];
+var unlockAccount = web3.personal.unlockAccount(account_one,"nccutest",999999999);
+
+console.log(`account_one: ${account_one} `)
+console.log(`unlockAccount: ${unlockAccount} `)
+
+
 // 提交交易到区块链，会立即返回交易hash，但是交易要等到被矿工收录到区块中后才生效
 // var txhash = con.createContainer("test1", {from:account_one, gas:4300000});
 // console.log(`hash: ${txhash}`);
