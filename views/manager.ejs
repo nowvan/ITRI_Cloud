@@ -86,14 +86,14 @@
     // 放在雲端的API
     var dataAPI = 'http://140.119.163.196:3000';
     // 控制pi的API
-    var ethAPI = 'http://140.119.163.199:3000';
+    var piAPI = 'http://140.119.163.199:3000';
 
     //啟動裝置開始記錄上傳資料 以及 開始雲端上將鏈上資料抓到資料庫裡
     function triggerStart(address){
         // alert("Start contract : "+address)
         $.ajax({
             type: "post",
-            url: ethAPI+'/startWatch',
+            url: dataAPI+'/startWatch',
             async: true,
             data: JSON.stringify({
                 idAddress: address
@@ -105,7 +105,7 @@
         });
         $.ajax({
             type: "post",
-            url: dataAPI+'/start',
+            url: piAPI+'/start',
             async: true,
             data: JSON.stringify({
                 idAddress: address
@@ -116,7 +116,6 @@
                 alert(data.status);
             }
         });
-
     }
 
     //關閉裝置開始記錄上傳資料 以及 結束雲端上將鏈上資料抓到資料庫裡
@@ -124,7 +123,7 @@
         // alert("Start contract : "+address)
         $.ajax({
             type: "post",
-            url: ethAPI+'/stopWatch',
+            url: dataAPI+'/stopWatch',
             async: true,
             data: JSON.stringify({
                 idAddress: address
@@ -136,7 +135,7 @@
         });
         $.ajax({
             type: "post",
-            url: dataAPI+'/stop',
+            url: piAPI+'/stop',
             async: true,
             data: JSON.stringify({
                 idAddress: address
