@@ -4,17 +4,13 @@ const mysql=require('mysql');
 
 
 //new adding 20180917
-const GetSensor = require('../models/getSensor_new_test');
 const CreateNew = require('../models/createNewcontainer');
 const ServerDB = require('../models/server_DB');
 
-let getSensor = new GetSensor();
 let createNew = new CreateNew();
 let serverDB = new ServerDB();
 
 //router for eth
-router.post('/start',getSensor.start);
-router.post('/stop', getSensor.stop);
 router.post('/CreateNew',createNew.create);
 router.post('/startWatch',serverDB.startWatch);
 router.post('/stopWatch',serverDB.stopWatch);
