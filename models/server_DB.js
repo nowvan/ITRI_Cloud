@@ -22,6 +22,8 @@ class ServerDB{
         var account_one = web3.eth.accounts[0];
         var Id = sensorContract.containerID.call();
 
+        res.json({"status":"Senser start to watch"});
+
         myEvent.watch(function(err, result) {  //print index and state
         	let obj = {}; 
             let gps = {};   
@@ -58,6 +60,8 @@ class ServerDB{
     stopWatch(req,res,next){
         myEvent.stopWatching();
         console.log(`Stop watching`);
+        res.json({"status":"Senser stop watching"});
+
         return;
     }
 }

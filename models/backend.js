@@ -18,13 +18,16 @@ class backend{
                 if(!err){
                     let sql=`SELECT * FROM container WHERE id = '${req.query.id}' AND timestamp BETWEEN '${req.query.timestampstart}' AND '${req.query.timestampend}' `;
                     conn.query(sql,function(err,ressql){
-                        if(!err){
+                        if(!err && ressql.length !== 0){
                             console.log("ressql: "+ressql);
-                            res.send(JSON.stringify(ressql));
-
+                            res.json(ressql);
+                        }
+                        else if(!err && ressql.length === 0){
+                            res.json("ContainerError");
                         }
                         else{
                             console.log(err);
+                            res.json(err);
                         }
                         conn.end();
                     });
@@ -39,7 +42,7 @@ class backend{
                         conn.query(sql,function(err,ressql){
                             if(!err){
                                 //console.log(ressql);
-                                res.send(JSON.stringify(ressql));
+                                res.json(ressql);
                             }
                         });
                     }
@@ -48,7 +51,7 @@ class backend{
                         conn.query(sql,function(err,ressql){
                             if(!err){
                                 //console.log(ressql);
-                                res.send(JSON.stringify(ressql));
+                                res.json(ressql);
                             }
                         });
                     }
@@ -101,11 +104,16 @@ class backend{
                 conn.query(sql,function(err,ressql){
                     if(!err){
                         //console.log(ressql);
-                        res.send(JSON.stringify(ressql));
-
+                        res.json(ressql);
+                    }
+                    else{
+                        res.status(500).json({DBError:err});
                     }
                 });
                 conn.end();
+            }
+            else{
+                res.status(500).json({DBError:err});
             }
         });
     }

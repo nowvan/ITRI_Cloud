@@ -14,7 +14,7 @@ let backend = new Backend();
 router.post('/CreateNew',createNew.create);
 router.post('/startWatch',serverDB.startWatch);
 router.post('/stopWatch',serverDB.stopWatch)
-router.get('/api/container/dates',backend.getDataById);
+router.get('/api/container/datas',backend.getDataById);
 // router.get('/getDataByIdTime',backend.getDataByIdTime);
 router.post('/save',backend.save);
 router.get('/api/containerlist',backend.containerlist);
@@ -40,7 +40,7 @@ router.get('/container', function(req, res, next) {
     }
 });
 
-router.get('/registerid', function(req, res, next) {
+router.get('/api/registerid', function(req, res, next) {
     res.render('registerid', { });
 });
 

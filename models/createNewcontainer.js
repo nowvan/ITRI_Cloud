@@ -39,73 +39,91 @@ console.log(`unlockAccount: ${unlockAccount} `)
 //Create new contract
 //API use inputID
 class CreateNew{
-  create(req,res,next){
+    create(req,res,next){
 
-  	var myEvent = con.containerCreated();
+        var myEvent = con.containerCreated();
 
-  	    console.log(JSON.stringify(req.body));
-		let inputID=req.body.inputID;
-		console.log(`ID: ${inputID}`);
+        console.log(JSON.stringify(req.body));
+        let inputID=req.body.inputID;
+        console.log(`ID: ${inputID}`);
 
-		let conn=mysql.createConnection({
-			host:"127.0.0.1",
-			user:"pi",
-			password:"nccutest",
-			database:"ITRIProject"
-		});
+        let conn=mysql.createConnection({
+            host:"127.0.0.1",
+            user:"pi",
+            password:"nccutest",
+            database:"ITRIProject"
+        });
 
-		//listen to the 
-	//	var myEvent = con.containerCreated();
-		console.log("start watching")
-		myEvent.watch(function(err, result) {
-		    if (!err) {
-		    	let _address = result.args._address;
-		    	let _containerNumber = result.args._containerNumber;
-		    	let _containerID = result.args._containerID;
-				console.log(`Watching :: ID: ${_containerID}, address :${_address}, The total number of container :${_containerNumber}`);
 
-		    	if(_containerID === inputID){
-		    		console.log("ID correct")
-		    		conn.connect(function(err){
-						if(!err){
-							let sql="INSERT INTO `IdMapContract`(`Id`,`Contract_Address`,`Number`) VALUES ('"+_containerID+"','"+_address+"','"+_containerNumber+"')";
-							conn.query(sql,function(err,ressql){
-								if(!err){
-									res.send(JSON.stringify(`{ID: ${_containerID}, address :${_address}, totalnumber:${_containerNumber}}`));
-									// console.log("ressql: "+ressql);
-									// res.send(JSON.stringify(ressql));
-									myEvent.stopWatching();
-									console.log("stop watching")
-								}	
-								else{
-									console.log(err);
-									myEvent.stopWatching();
-									console.log("stop watching")
-								}
-								conn.end();
-							});
-						}		
-					});	
-		    	}else{
-		    		console.log("ID not correct")
-		    	}
-		    } 
-		    // else {
-		    //     console.log(err);
-		    //     res.send(err);
-		    // }
-		});
+        conn.connect(function(err){
 
-		if (inputID!= undefined){
-			//提交交易到区块链，会立即返回交易hash，生成新和合約
-			let txhash = con.createContainer(inputID, {from:account_one, gas:4300000});
-			console.log(`hash: ${txhash}`);
-			//res.write(`hash: ${txhash}`);
-		}
+            if(!err){
+                let sql=`SELECT * FROM IdMapContract WHERE id = '${inputID}'`;
+                conn.query(sql,function(err,ressqlone){
+                    if(!err){
+                        console.log(ressqlone.length);
+                        //檢查是否有註冊過
+                    	if(ressqlone.length === 0 ){
+                            //listen to the
+                            //	var myEvent = con.containerCreated();
+                            console.log("start watching")
+                            myEvent.watch(function(err, result) {
+                                if (!err) {
+                                    let _address = result.args._address;
+                                    let _containerNumber = result.args._containerNumber;
+                                    let _containerID = result.args._containerID;
+                                    console.log(`Watching :: ID: ${_containerID}, address :${_address}, The total number of container :${_containerNumber}`);
 
-		
-		return;
-	}
+                                    if(_containerID === inputID){
+                                        console.log("ID correct")
+                                        conn.connect(function(err){
+                                            if(!err){
+                                                let sql="INSERT INTO `IdMapContract`(`Id`,`Contract_Address`,`Number`) VALUES ('"+_containerID+"','"+_address+"','"+_containerNumber+"')";
+                                                conn.query(sql,function(err,ressql){
+                                                    if(!err){
+                                                        res.send(JSON.stringify(`{ID: ${_containerID}, address :${_address}, totalnumber:${_containerNumber}}`));
+                                                         console.log("ressql: "+ressql);
+                                                        // res.send(JSON.stringify(ressql));
+                                                        myEvent.stopWatching();
+                                                        console.log("stop watching")
+                                                    }
+                                                    else{
+                                                        console.log(err);
+                                                        myEvent.stopWatching();
+                                                        console.log("stop watching")
+                                                    }
+                                                    conn.end();
+                                                });
+                                            }
+                                        });
+                                    }else{
+                                        console.log("ID not correct")
+                                    }
+                                }
+                                // else {
+                                //     console.log(err);
+                                //     res.send(err);
+                                // }
+                            });
+
+                            if (inputID!= undefined){
+                                //提交交易到区块链，会立即返回交易hash，生成新和合約
+                                let txhash = con.createContainer(inputID, {from:account_one, gas:4300000});
+                                console.log(`hash: ${txhash}`);
+                                //res.write(`hash: ${txhash}`);
+                            }
+						}
+						else{                           //DB裡已經有紀錄
+                            console.log("IDExistError");
+                            res.json("IDExistError");
+						}
+                    }
+                });
+                conn.end();
+            }
+        });
+
+    }
 }
 
 
