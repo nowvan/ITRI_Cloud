@@ -299,7 +299,7 @@
 
         var dataAPI = 'http://140.119.163.196:3000';
         //將資料用ajax抓取後動態顯示在前端
-        $.getJSON(dataAPI+"/api/container/dates",{
+        $.getJSON(dataAPI+"/api/container/data",{
             id:$("#deviceid").val(),
             timestampstart:$( "#timeinterval" ).val().slice(0,19),
             timestampend:$( "#timeinterval" ).val().slice(22,46)

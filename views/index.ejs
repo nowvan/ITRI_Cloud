@@ -304,7 +304,7 @@
         var dataAPI = 'http://140.119.163.196:3000';
 
         //將資料用ajax抓取後資料動態顯示在前端
-        $.getJSON(dataAPI+"/api/container/dates",{id:$("#deviceid").val()}, function (data) {
+        $.getJSON(dataAPI+"/api/container/data",{id:$("#deviceid").val()}, function (data) {
 
             console.log(data);
             for (var k in data) {
@@ -350,7 +350,7 @@
         //檢查是否有新的資料到資料庫裡
         setInterval(function () {
             // console.table(dataSet)
-            $.getJSON(dataAPI+"/api/container/dates",{id:$("#deviceid").val()}, function (data) {
+            $.getJSON(dataAPI+"/api/container/data",{id:$("#deviceid").val()}, function (data) {
                 console.log(data);
 
                 for (var v of data){
