@@ -309,7 +309,7 @@
             console.log(data);
             for (var k in data) {
                 // console.log(k, data[k]);
-                dataSet.push([data[k].pi_mac, new Date(data[k].timestamp).toLocaleString(), Number(data[k].lat) + 0.394613, Number(data[k].lng) + 0.229376, data[k].temperature, data[k].humidity]);
+                dataSet.push([data[k].pi_mac, new Date(data[k].timestamp).toLocaleString(), Number(data[k].lat), Number(data[k].lng), data[k].temperature, data[k].humidity]);
                 labels.push(new Date(data[k].timestamp).toLocaleString());
                 temperatures.push(data[k].temperature);
                 humiditys.push(data[k].humidity);
@@ -366,7 +366,7 @@
                         console.log(ii++);
                         console.log(new Date(v.timestamp).toLocaleString());
                         console.log(v);
-                        tmpdataSet = [[v.pi_mac, new Date(v.timestamp).toLocaleString(), Number(v.lat) + 0.394613, Number(v.lng) + 0.229376, v.temperature, v.humidity]];
+                        tmpdataSet = [[v.pi_mac, new Date(v.timestamp).toLocaleString(), Number(v.lat), Number(v.lng), v.temperature, v.humidity]];
                         tmplabels = new Date(v.timestamp).toLocaleString();
                         tmptemperatures = v.temperature;
                         tmphumiditys = v.humidity;
@@ -381,7 +381,7 @@
 
                         table.row.add(tmpdataSet[0]).draw();
 
-                        dataSet.push([v.pi_mac, new Date(v.timestamp).toLocaleString(), Number(v.lat) + 0.394613, Number(v.lng) + 0.229376, v.temperature, v.humidity]);
+                        dataSet.push([v.pi_mac, new Date(v.timestamp).toLocaleString(), Number(v.lat), Number(v.lng), v.temperature, v.humidity]);
                         labels.push(new Date(v.timestamp).toLocaleString());
                         temperatures.push(v.temperature);
                         humiditys.push(v.humidity);
