@@ -4,7 +4,7 @@ var Web3 = require("web3")
 var web3 = new Web3
 web3.setProvider(new Web3.providers.HttpProvider("http://localhost:8545"));
 var http = require('http');
-const mysql = require('mysql');
+const db = require('./connection_db');
 
 var abi = [{
     "constant": true,
@@ -96,19 +96,8 @@ class CreateNew {
         let inputID = req.body.inputID;
         console.log(`ID: ${inputID}`);
 
-        let conn = mysql.createConnection({
-            host: "127.0.0.1",
-            user: "pi",
-            password: "nccutest",
-            database: "ITRIProject"
-        });
-
-
-        conn.connect(function (err) {
-
-            if (!err) {
                 let sql = `SELECT * FROM IdMapContract WHERE id = '${inputID}'`;
-                conn.query(sql, function (err, ressqlone) {
+                db.query(sql, function (err, ressqlone) {
                     if (!err) {
                         console.log(ressqlone.length);
                         //檢查是否有註冊過
@@ -125,7 +114,7 @@ class CreateNew {
                                     if (_containerID === inputID) {
                                         console.log("ID correct")
                                         let sql = "INSERT INTO `IdMapContract`(`Id`,`Contract_Address`,`Number`) VALUES ('" + _containerID + "','" + _address + "','" + _containerNumber + "')";
-                                        conn.query(sql, function (err, ressql) {
+                                        db.query(sql, function (err, ressql) {
                                             if (!err) {
                                                 res.json(`{"ID":"${_containerID}","address":"${_address}","totalnumber":${_containerNumber}}`);
                                                 console.log("ressql: " + ressql);
@@ -138,7 +127,6 @@ class CreateNew {
                                                 myEvent.stopWatching();
                                                 console.log("stop watching")
                                             }
-                                            conn.end();
                                         });
 
                                     } else {
@@ -161,18 +149,14 @@ class CreateNew {
                         else {                           //DB裡已經有紀錄
                             console.log("IDExistError");
                             res.json(`{"err":"IDExistError"}`);
-                            conn.end();
                         }
                     }
                     else {
                         console.log(err);
                         myEvent.stopWatching();
                         console.log("stop watching")
-                        conn.end();
                     }
                 });
-            }
-        });
 
     }
 }
