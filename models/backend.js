@@ -1,4 +1,5 @@
 const mysql=require('mysql');
+const db = require('/connection_db');
 
 
 class backend{
