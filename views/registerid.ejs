@@ -128,9 +128,9 @@ function createNew() {
             let data = JSON.parse(dataJSON.toString());
             console.log(data);
             if(!data.err){
-                swal("創建合約成功", `ID: ${data.ID} address: ${data.address} totalnumber: ${data.totalnumber}`, "success")
+                swal("創建合約成功", `ID: ${data.ID} address: ${data.address} totalnumber: ${data.totalnumber}`, "success");
             }else{
-                swal("創建合約失敗", `err: ${data.err}`, "error")
+                swal("創建合約失敗", `err: ${data.err}`, "error");
             }
 
             $("#waitＭodal").modal('hide')
