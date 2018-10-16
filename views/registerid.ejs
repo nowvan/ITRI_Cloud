@@ -25,6 +25,9 @@
     <link rel="stylesheet" type="text/css" href="bower_components/DataTables/rowReorder.dataTables.min.css"/>
     <!--呈現圖表套件-->
     <script type="text/javascript" src="bower_components/chart/Chart.js"></script>
+    <!--sweetalert-->
+    <script type="text/javascript" src="bower_components/sweetalert/sweetalert.min.js"></script>
+
 
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
@@ -108,6 +111,7 @@ function createNew() {
 
     var dataAPI = 'http://140.119.163.196:3000';
 
+
     //創建新合約成功回傳後才能夠繼續操作
     $.ajax({
         type: "post",
@@ -119,7 +123,7 @@ function createNew() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function(data) {
-            alert(data);
+            swal("創建合約成功", "data！", "success")
             $("#waitＭodal").modal('hide')
         }
     });

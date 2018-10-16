@@ -74,6 +74,7 @@ class CreateNew{
                                     let _containerID = result.args._containerID;
                                     console.log(`Watching :: ID: ${_containerID}, address :${_address}, The total number of container :${_containerNumber}`);
 
+                                    console.log("Watching ID is "+_containerID);
                                     if(_containerID === inputID){
                                         console.log("ID correct")
                                         conn.connect(function(err){
