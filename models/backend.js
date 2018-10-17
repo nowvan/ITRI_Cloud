@@ -83,7 +83,7 @@ class backend{
                         res.json(ressql);
                     }
                     else{
-                        res.status(500).json({DBError:err});
+                        res.status(500).json({err:"DBError"});
                     }
                 });
     }

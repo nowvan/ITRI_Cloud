@@ -125,8 +125,7 @@
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-                    success: function (dataJSON) {
-                        let data = JSON.parse(dataJSON.toString());
+                    success: function (data) {
                         swal(inputValue + "的container已啟動", data.status, "success");
 
                         $.ajax({
@@ -138,8 +137,8 @@
                             }),
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
-                            success: function (dataJSON) {
-                                let data = JSON.parse(dataJSON.toString());
+                            success: function (data) {
+
                                 swal("container已啟動&監聽啟用", data.status, "success")
                             }
                         });
@@ -179,8 +178,7 @@
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-                    success: function (dataJSON) {
-                        let data = JSON.parse(dataJSON.toString());
+                    success: function (data) {
                         swal(inputValue + "的container已停止", data.status, "success");
 
                         $.ajax({
@@ -192,8 +190,7 @@
                             }),
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
-                            success: function (dataJSON) {
-                                let data = JSON.parse(dataJSON.toString());
+                            success: function (data) {
                                 swal("container已停止&監聽關閉", data.status, "success")
                             }
                         });

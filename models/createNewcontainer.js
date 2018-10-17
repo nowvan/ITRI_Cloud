@@ -116,7 +116,7 @@ class CreateNew {
                                         let sql = "INSERT INTO `IdMapContract`(`Id`,`Contract_Address`,`Number`) VALUES ('" + _containerID + "','" + _address + "','" + _containerNumber + "')";
                                         db.query(sql, function (err, ressql) {
                                             if (!err) {
-                                                res.json(`{"ID":"${_containerID}","address":"${_address}","totalnumber":${_containerNumber}}`);
+                                                res.json({ID:_containerID,address:_address,totalnumber:_containerNumber});
                                                 console.log("ressql: " + ressql);
                                                 // res.send(JSON.stringify(ressql));
                                                 myEvent.stopWatching();
@@ -148,7 +148,7 @@ class CreateNew {
                         }
                         else {                           //DB裡已經有紀錄
                             console.log("IDExistError");
-                            res.json(`{"err":"IDExistError"}`);
+                            res.json({err:"IDExistError"});
                         }
                     }
                     else {

@@ -121,12 +121,9 @@ function createNew() {
         }),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        success: function(dataJSON) {
-            // alert(data)
-            // console.log(dataJSON);
-            // console.log(dataJSON.err);
-            let data = JSON.parse(dataJSON.toString());
+        success: function(data) {
             console.log(data);
+            console.log(data.ID);
             if(!data.err){
                 swal("創建合約成功", `ID: ${data.ID} address: ${data.address} totalnumber: ${data.totalnumber}`, "success");
             }else{
