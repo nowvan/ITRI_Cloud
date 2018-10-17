@@ -88,6 +88,20 @@ class backend{
                 });
     }
 
+    getAddressById(req, res, next) {
+        console.log(req.query.id);
+        let sql=`SELECT Contract_Address FROM IdMapContract WHERE Id = "${req.query.id}"`;
+        db.query(sql,function(err,ressql){
+            if(!err){
+                console.log(ressql[0]);
+                res.json(ressql[0]);
+            }
+            else{
+                res.status(500).json({err:"DBError"});
+            }
+        });
+    }
+
     save(req,response){
 
         let data=JSON.parse(req.body.data);

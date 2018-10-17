@@ -143,7 +143,7 @@
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAprpUrbF7bXWIzEKLF0s8sRMi4lqs7uY8&callback=initMap">
 </script>
 <script>
-
+    let dataAPI = 'http://140.119.163.196:3000';
     var marker;
     var map;
     var table;
@@ -297,7 +297,7 @@
         var temperatures = [];
         var humiditys = [];
 
-        var dataAPI = 'http://140.119.163.196:3000';
+
         //將資料用ajax抓取後動態顯示在前端
         $.getJSON(dataAPI+"/api/container/data",{
             id:$("#deviceid").val(),
