@@ -15,7 +15,7 @@ class backend{
                             res.json(ressql);
                         }
                         else if(!err && ressql.length === 0){
-                            res.json("ContainerError");
+                            res.json({err:"ContainerError"});
                         }
                         else{
                             console.log(err);
