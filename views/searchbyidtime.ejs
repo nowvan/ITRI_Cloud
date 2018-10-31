@@ -252,6 +252,11 @@
                 intersect: true
             },
             scales: {
+                xAxes: [{
+                    ticks: {
+                        maxRotation: 0
+                    }
+                }],
                 yAxes: [{
                     id: 'temperature',
                     type: 'linear',
@@ -307,10 +312,10 @@
             console.log(data);
             for (var k in data) {
                 // console.log(k, data[k]);
-                dataSet.push([data[k].pi_mac, new Date(data[k].timestamp).toLocaleString(), Number(data[k].lat), Number(data[k].lng), data[k].temperature, data[k].humidity]);
+                dataSet.push([data[k].pi_mac, new Date(data[k].timestamp).toLocaleString(), Number(data[k].lat), Number(data[k].lng), Number(data[k].temperature), Number(data[k].humidity)]);
                 labels.push(new Date(data[k].timestamp).toLocaleString());
-                temperatures.push(data[k].temperature);
-                humiditys.push(data[k].humidity);
+                temperatures.push(Number(data[k].temperature));
+                humiditys.push(Number(data[k].humidity));
             }
             // console.log(dataSet)
 
@@ -335,6 +340,42 @@
 
             setMarkers(dataSet)
 
+            //動態調整溫濕度圖表參數
+            function countMaxT(temperatures){
+                let maxT = 0;
+                for(t of temperatures){
+                    if (t > maxT)maxT = t;
+                }
+                return Number(maxT);
+            }
+            function countMinT(temperatures){
+                let minT = 50;
+                for(t of temperatures){
+                    if (t < minT)minT = t;
+                }
+                return Number(minT);
+            }
+            function countMaxH(humiditys){
+                let maxH = 0;
+                for(h of humiditys){
+                    if (h > maxH)maxH = h;
+                }
+                return Number(maxH);
+            }
+            function countMinH(humiditys){
+                let minH = 50;
+                for(h of humiditys){
+                    if (h < minH)minH = h;
+                }
+                return Number(minH);
+            }
+
+            chartDataOption.options.scales.yAxes[0].ticks.max = countMaxT(temperatures)+3;
+            chartDataOption.options.scales.yAxes[0].ticks.min = countMinT(temperatures)-3;
+            chartDataOption.options.scales.yAxes[1].ticks.max = countMaxH(humiditys)+3;
+            chartDataOption.options.scales.yAxes[1].ticks.min = countMinH(humiditys)-3;
+
+
             chartDataOption.data.labels = labels;
             chartDataOption.data.datasets[0].data = temperatures;
             chartDataOption.data.datasets[1].data = humiditys;
@@ -344,6 +385,8 @@
             // This will get the first returned node in the jQuery collection.
             window.myLine = new Chart(ChartCanvas,chartDataOption);
         })
+
+
 
 
     });
