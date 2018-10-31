@@ -179,6 +179,7 @@
         }
     }
     // 慢慢跳出maker
+    let iNumber = 1;
     function doMarkerSetTimeout(i,_dataSet) {
         setTimeout(function () {
             var timestamp = _dataSet[i][1]
@@ -195,7 +196,8 @@
             });
             map.setCenter(marker.getPosition())
 
-            var content = '</h3>' + timestamp + '</h3>';
+            var content = `</h3> Number: ${iNumber} <br>${timestamp} </h3>`;
+            iNumber++;
 
             var infowindow = new google.maps.InfoWindow()
 
@@ -308,9 +310,9 @@
         var humiditys = [];
 
         var tmpdataSet = [];
-        var tmplabels = [];
-        var tmptemperatures = [];
-        var tmphumiditys = [];
+        var tmplabel = [];
+        var tmptemperature ;
+        var tmphumidity ;
 
 
 
@@ -384,31 +386,31 @@
                         console.log(ii++);
                         console.log(new Date(v.timestamp).toLocaleString());
                         console.log(v);
-                        tmpdataSet = [[v.pi_mac, new Date(v.timestamp).toLocaleString(), Number(v.lat), Number(v.lng), v.temperature, v.humidity]];
-                        tmplabels = new Date(v.timestamp).toLocaleString();
-                        tmptemperatures = v.temperature;
-                        tmphumiditys = v.humidity;
+
+                        tmpdataSet = [[v.pi_mac, new Date(v.timestamp).toLocaleString(), Number(v.lat), Number(v.lng), Number(v.temperature), Number(v.humidity)]];
+                        tmplabel = [new Date(v.timestamp).toLocaleString('tw', { year:'numeric',month: 'short',day:'numeric'}),new Date(v.timestamp).toLocaleString('tw', { hour:'numeric', minute:'numeric', second:'numeric'})];
+                        tmptemperature = Number(v.temperature);
+                        tmphumidity = Number(v.humidity);
 
                         setMarkers(tmpdataSet)
 
-                        console.log("aaa"+countMaxT(tmptemperatures))
-                        chartDataOption.options.scales.yAxes[0].ticks.max = countMaxT(tmptemperatures)+3;
-                        chartDataOption.options.scales.yAxes[0].ticks.min = countMinT(tmptemperatures)-3;
-                        chartDataOption.options.scales.yAxes[1].ticks.max = countMaxH(tmphumiditys)+3;
-                        chartDataOption.options.scales.yAxes[1].ticks.min = countMinH(tmphumiditys)-3;
+                        chartDataOption.options.scales.yAxes[0].ticks.max = countMaxT([tmptemperature])+3;
+                        chartDataOption.options.scales.yAxes[0].ticks.min = countMinT([tmptemperature])-3;
+                        chartDataOption.options.scales.yAxes[1].ticks.max = countMaxH([tmphumidity])+3;
+                        chartDataOption.options.scales.yAxes[1].ticks.min = countMinH([tmphumidity])-3;
 
-                        chartDataOption.data.labels.push(tmplabels);
-                        chartDataOption.data.datasets[0].data.push(tmptemperatures);
-                        chartDataOption.data.datasets[1].data.push(tmphumiditys);
+                        chartDataOption.data.labels.push(tmplabel);
+                        chartDataOption.data.datasets[0].data.push(tmptemperature);
+                        chartDataOption.data.datasets[1].data.push(tmphumidity);
 
                         window.myLine.update();
 
                         table.row.add(tmpdataSet[0]).draw();
 
-                        dataSet.push([v.pi_mac, new Date(v.timestamp).toLocaleString(), Number(v.lat), Number(v.lng), v.temperature, v.humidity]);
-                        labels.push(new Date(v.timestamp).toLocaleString());
-                        temperatures.push(v.temperature);
-                        humiditys.push(v.humidity);
+                        dataSet.push(tmpdataSet[0]);
+                        labels.push(tmplabel);
+                        temperatures.push(tmptemperature);
+                        humiditys.push(tmphumidity);
                     }
                 }
             });
@@ -416,29 +418,30 @@
     });
 
     //動態調整溫濕度圖表參數
+    let maxT = 0;
+    let minT = 50;
+    let maxH = 0;
+    let minH = 50;
+
     function countMaxT(temperatures){
-        let maxT = 0;
         for(t of temperatures){
             if (t > maxT)maxT = t;
         }
         return Number(maxT);
     }
     function countMinT(temperatures){
-        let minT = 50;
         for(t of temperatures){
             if (t < minT)minT = t;
         }
         return Number(minT);
     }
     function countMaxH(humiditys){
-        let maxH = 0;
         for(h of humiditys){
             if (h > maxH)maxH = h;
         }
         return Number(maxH);
     }
     function countMinH(humiditys){
-        let minH = 50;
         for(h of humiditys){
             if (h < minH)minH = h;
         }

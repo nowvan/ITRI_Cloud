@@ -177,6 +177,7 @@
     }
 
 
+    let iNumber = 1;
     function doMarkerSetTimeout(i,_dataSet) {
         setTimeout(function () {
             var timestamp = _dataSet[i][1]
@@ -193,8 +194,8 @@
             });
             map.setCenter(marker.getPosition())
 
-            var content = '</h3>' + timestamp + '</h3>';
-
+            var content = `</h3> Number: ${iNumber} <br>${timestamp} </h3>`;
+            iNumber++;
             var infowindow = new google.maps.InfoWindow()
 
             google.maps.event.addListener(marker, 'mouseover', (function (marker, content, infowindow) {
