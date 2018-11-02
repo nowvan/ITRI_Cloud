@@ -148,20 +148,17 @@
 </script>
 <script>
 
+    let dataAPI = 'http://140.119.163.196:3000'; //伺服器的ip以及port位置
+    let map; //因為只會存在一張地圖
+    let table; //需要在第一次以及之後動態挑整時一直更新所以用全域
 
-    let dataAPI = 'http://140.119.163.196:3000';
-    var marker;
-    var map;
-    var table;
-
+    //初始化地圖 地點設在大仁樓
     function initMap() {
-        var myLatLng = {lat: 24.987088, lng: 121.573474};
-
+        let myLatLng = {lat: 24.987088, lng: 121.573474};
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 20,
             center: myLatLng
         });
-
     }
 
     // 製造跳動效果
@@ -172,23 +169,23 @@
             marker.setAnimation(google.maps.Animation.BOUNCE);
         }
     }
-    // 設置maker
+    // 設置maker 使marker一個一個產出
     function setMarkers(_dataSet) {
         for (var i = 0; i < _dataSet.length; i++) {
             doMarkerSetTimeout(i,_dataSet);
         }
     }
-    // 慢慢跳出maker
+    // 能夠設定時間區間來跳出maker
     let iNumber = 1;
     function doMarkerSetTimeout(i,_dataSet) {
         setTimeout(function () {
-            var timestamp = _dataSet[i][1]
-            var lat = _dataSet[i][2]
-            var long = _dataSet[i][3]
+            let timestamp = _dataSet[i][1]
+            let lat = _dataSet[i][2]
+            let long = _dataSet[i][3]
 
             latlngset = new google.maps.LatLng(lat, long);
 
-            var marker = new google.maps.Marker({
+            let marker = new google.maps.Marker({
                 map: map,
                 title: timestamp,
                 position: latlngset,
@@ -196,11 +193,12 @@
             });
             map.setCenter(marker.getPosition())
 
-            var content = `</h3> Number: ${iNumber} <br>${timestamp} </h3>`;
+            let content = `</h3> Number: ${iNumber} <br>${timestamp} </h3>`;
             iNumber++;
 
-            var infowindow = new google.maps.InfoWindow()
+            let infowindow = new google.maps.InfoWindow();
 
+            // 使得滑鼠移至marker上時會有反應
             google.maps.event.addListener(marker, 'mouseover', (function (marker, content, infowindow) {
                 return function () {
                     infowindow.setContent(content);
@@ -208,7 +206,7 @@
                     toggleBounce(marker)
                 };
             })(marker, content, infowindow));
-
+            // 使得滑鼠移至點marker上時會有反應
             google.maps.event.addListener(marker, 'mouseout', (function (marker, content, infowindow) {
                 return function () {
                     infowindow.close(map, marker);

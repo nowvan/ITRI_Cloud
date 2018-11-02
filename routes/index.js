@@ -10,7 +10,7 @@ let createNew = new CreateNew();
 let serverDB = new ServerDB();
 let backend = new Backend();
 
-//router for eth
+//router for api
 router.post('/CreateNew',createNew.create);
 router.post('/startWatch',serverDB.startWatch);
 router.post('/stopWatch',serverDB.stopWatch)

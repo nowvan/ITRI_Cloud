@@ -2,7 +2,8 @@ const db = require('./connection_db');
 
 
 class backend{
-
+//輸入id將回傳所有此id所有資料
+//如果加上輸入timestamp就會回傳特定時間區間的資料
     getDataById(req, res, next) {
          console.log(req.query);
         // console.log(req.query.timestampstart);
@@ -45,34 +46,7 @@ class backend{
                     }
         }
     }
-
-    // getDataByIdTime(req, res, next) {
-    //     // console.log(req.query);
-    //     let conn=mysql.createConnection({
-    //         host:"127.0.0.1",
-    //         user:"pi",
-    //         password:"nccutest",
-    //         database:"ITRIProject"
-    //     });
-    //     conn.connect(function(err){
-    //
-    //         if(!err){
-    //             let sql=`SELECT * FROM container WHERE id = '${req.query.id}' AND timestamp BETWEEN '${req.query.timestampstart}' AND '${req.query.timestampend}' `;
-    //             conn.query(sql,function(err,ressql){
-    //                 if(!err){
-    //                     console.log("ressql: "+ressql);
-    //                     res.send(JSON.stringify(ressql));
-    //
-    //                 }
-    //                 else{
-    //                     console.log(err);
-    //                 }
-    //                 conn.end();
-    //             });
-    //         }
-    //     });
-    // }
-
+//回傳所有已註冊的id以及address
     containerlist(req, res, next) {
 
             console.log(req.query.id);
@@ -87,7 +61,7 @@ class backend{
                     }
                 });
     }
-
+//輸入id回傳address
     getAddressById(req, res, next) {
         console.log(req.query.id);
         let sql=`SELECT Contract_Address FROM IdMapContract WHERE Id = "${req.query.id}"`;
@@ -101,7 +75,7 @@ class backend{
             }
         });
     }
-
+//資料儲存至資料庫的api
     save(req,response){
 
         let data=JSON.parse(req.body.data);
