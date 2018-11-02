@@ -171,7 +171,7 @@
     }
     // 設置maker 使marker一個一個產出
     function setMarkers(_dataSet) {
-        for (var i = 0; i < _dataSet.length; i++) {
+        for (let i = 0; i < _dataSet.length; i++) {
             doMarkerSetTimeout(i,_dataSet);
         }
     }
@@ -213,30 +213,28 @@
                     toggleBounce(marker)
                 };
             })(marker, content, infowindow));
-        }, i * 100);
+        }, i * 10);
     }
 
-    // 表單設置
-    var chartDataOption = {
+    // 溫濕度圖表設置
+    let chartDataOption = {
         type: 'line',
         data:{
-            labels: [],
+            labels: [], //ajax完後會塞資料進來
             datasets: [{
                 label: 'temperature',
                 yAxisID: 'temperature',
                 fill: false,
                 // backgroundColor: 'rgba(255, 127, 80,0.3)',
                 borderColor: "rgba(255, 127, 80,0.5)",
-                data: []
-
+                data: [] //ajax完後會塞資料進來
             }, {
                 label: 'humidity',
                 yAxisID: 'humidity',
                 fill: false,
                 // backgroundColor: 'rgba(30, 144, 255,0.3)',
                 borderColor: 'rgba(30, 144, 255,0.5)',
-                data: []
-
+                data: [] //ajax完後會塞資料進來
             }],
         },
         options : {
@@ -300,33 +298,34 @@
         }
     });
 
+    // Jquery等待網頁跑好後才執行
     $(function () {
         initMap()
-        var dataSet = [];
-        var labels = [];
-        var temperatures = [];
-        var humiditys = [];
+        let dataSet = []; //datatable需要的資料格式
+        let labels = []; //chart.js 需要的格式 之後會塞在chartDataOption裡面
+        let temperatures = []; //chart.js 需要的格式 之後會塞在chartDataOption裡面
+        let humiditys = []; //chart.js 需要的格式 之後會塞在chartDataOption裡面
 
-        var tmpdataSet = [];
-        var tmplabel = [];
-        var tmptemperature ;
-        var tmphumidity ;
-
+        //這部分是在重複request後看有沒有新的資料近來 有的話暫存的資料
+        let tmpdataSet = [];
+        let tmplabel = [];
+        let tmptemperature ;
+        let tmphumidity ;
 
 
         //將資料用ajax抓取後資料動態顯示在前端
         $.getJSON(dataAPI+"/api/container/data",{id:$("#deviceid").val()}, function (data) {
 
             console.log(data);
-            for (var k in data) {
+            for (let k in data) {
                 // console.log(k, data[k]);
                 dataSet.push([data[k].pi_mac, new Date(data[k].timestamp).toLocaleString(), Number(data[k].lat), Number(data[k].lng), Number(data[k].temperature), Number(data[k].humidity)]);
                 labels.push([new Date(data[k].timestamp).toLocaleString('tw', { year:'numeric',month: 'short',day:'numeric'}),new Date(data[k].timestamp).toLocaleString('tw', { hour:'numeric', minute:'numeric', second:'numeric'})]);
                 temperatures.push(Number(data[k].temperature));
                 humiditys.push(Number(data[k].humidity));
             }
-            // console.log(dataSet)
 
+            //創出datatable 以及設定他的值
             $(document).ready(function () {
                 table = $('#datatable').DataTable({
                     data: dataSet,
@@ -346,49 +345,51 @@
                 table.order( [ 1, 'desc' ] ).draw();
             });
 
+            //加入maker 函式的程式碼都在上面的
             setMarkers(dataSet)
 
+            //運算溫濕度的最高和最低值 來設定chart.js 才不會超出圖表
             chartDataOption.options.scales.yAxes[0].ticks.max = countMaxT(temperatures)+3;
             chartDataOption.options.scales.yAxes[0].ticks.min = countMinT(temperatures)-3;
             chartDataOption.options.scales.yAxes[1].ticks.max = countMaxH(humiditys)+3;
             chartDataOption.options.scales.yAxes[1].ticks.min = countMinH(humiditys)-3;
-
-
+            //將資料塞進chartDataOption
             chartDataOption.data.labels = labels;
             chartDataOption.data.datasets[0].data = temperatures;
             chartDataOption.data.datasets[1].data = humiditys;
-
-            var ChartCanvas = $('#areaChart').get(0).getContext('2d')
-
+            //畫出圖表
+            let ChartCanvas = $('#areaChart').get(0).getContext('2d')
             window.myLine = new Chart(ChartCanvas,chartDataOption);
         })
 
-        var ii=0;
-
+        //只是檢查有幾筆新資料進來所顯示的數字
+        let newdatanumber=0;
         //檢查是否有新的資料到資料庫裡
         setInterval(function () {
             // console.table(dataSet)
             $.getJSON(dataAPI+"/api/container/data",{id:$("#deviceid").val()}, function (data) {
                 // console.log(data);
 
-                for (var v of data){
-                    var haveequal=0
+                //一筆一筆處理比資料有沒有之前不存在的
+                for (let newGetData of data){
+                    let haveequal=0
                     // console.log(v.timestamp);
-                    for(var vv of dataSet){
+                    //檢查有沒有舊資料一樣的資料 有就跳過 沒有才處理
+                    for(let oldGetData of dataSet){
                         // console.log(vv[1]);
-                        if( new Date(v.timestamp).toLocaleString() === vv[1] ){
+                        if( new Date(newGetData.timestamp).toLocaleString() === oldGetData[1] ){
                             haveequal = 1;
                         }
                     }
                     if(haveequal === 0) {
-                        console.log(ii++);
-                        console.log(new Date(v.timestamp).toLocaleString());
-                        console.log(v);
+                        console.log(newdatanumber++);
+                        console.log(new Date(newGetData.timestamp).toLocaleString());
+                        console.log(newGetData);
 
-                        tmpdataSet = [[v.pi_mac, new Date(v.timestamp).toLocaleString(), Number(v.lat), Number(v.lng), Number(v.temperature), Number(v.humidity)]];
-                        tmplabel = [new Date(v.timestamp).toLocaleString('tw', { year:'numeric',month: 'short',day:'numeric'}),new Date(v.timestamp).toLocaleString('tw', { hour:'numeric', minute:'numeric', second:'numeric'})];
-                        tmptemperature = Number(v.temperature);
-                        tmphumidity = Number(v.humidity);
+                        tmpdataSet = [[newGetData.pi_mac, new Date(v.timestamp).toLocaleString(), Number(newGetData.lat), Number(newGetData.lng), Number(newGetData.temperature), Number(newGetData.humidity)]];
+                        tmplabel = [new Date(newGetData.timestamp).toLocaleString('tw', { year:'numeric',month: 'short',day:'numeric'}),new Date(newGetData.timestamp).toLocaleString('tw', { hour:'numeric', minute:'numeric', second:'numeric'})];
+                        tmptemperature = Number(newGetData.temperature);
+                        tmphumidity = Number(newGetData.humidity);
 
                         setMarkers(tmpdataSet)
 

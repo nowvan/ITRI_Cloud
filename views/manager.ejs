@@ -94,57 +94,51 @@
 
     //啟動裝置開始記錄上傳資料 以及 開始雲端上將鏈上資料抓到資料庫裡
     function triggerStart(address) {
-        // alert("Start contract : "+address)
-
-
         swal({
-                title: "啟動container",
-                text: "請輸入container的IP位置",
-                content: "input",
-                button: {
-                    text: "啟動!",
-                    closeModal: false,
+            title: "啟動container",
+            text: "請輸入container的IP位置",
+            content: "input",
+            button: {
+                text: "啟動!",
+                closeModal: false,
+            }
+
+        }).then((inputValue) => {
+            if (inputValue === false) return false;
+
+            if (inputValue === "") {
+                swal.showInputError("請輸入需啟動container的IP");
+                return false
+            }
+            $.ajax({
+                type: "post",
+                url: inputValue + '/start',
+                async: true,
+                data: JSON.stringify({
+                    idAddress: address
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    swal(inputValue + "的container已啟動", data.status, "success");
+
+                    $.ajax({
+                        type: "post",
+                        url: dataAPI + '/startWatch',
+                        async: true,
+                        data: JSON.stringify({
+                            idAddress: address
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+
+                            swal("container已啟動&監聽啟用", data.status, "success")
+                        }
+                    });
                 }
-
-        }).then((inputValue)=>{
-                if (inputValue === false) return false;
-
-                if (inputValue === "") {
-                    swal.showInputError("請輸入需啟動container的IP");
-                    return false
-                }
-
-                 // swal("非常好！", "你输入了：" + inputValue, "success");
-
-                $.ajax({
-                    type: "post",
-                    url: inputValue + '/start',
-                    async: true,
-                    data: JSON.stringify({
-                        idAddress: address
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data) {
-                        swal(inputValue + "的container已啟動", data.status, "success");
-
-                        $.ajax({
-                            type: "post",
-                            url: dataAPI + '/startWatch',
-                            async: true,
-                            data: JSON.stringify({
-                                idAddress: address
-                            }),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function (data) {
-
-                                swal("container已啟動&監聽啟用", data.status, "success")
-                            }
-                        });
-                    }
-                });
             });
+        });
 
 
     }
@@ -152,80 +146,48 @@
     //關閉裝置開始記錄上傳資料 以及 結束雲端上將鏈上資料抓到資料庫裡
     function triggerStop(address) {
         swal({
-                title: "關閉container",
-                text: "請輸入container的IP位置",
-                content: "input",
-                button: {
-                    text: "停止!",
-                    closeModal: false,
-             }
-            }).then((inputValue)=>{
-                if (inputValue === false) return false;
+            title: "關閉container",
+            text: "請輸入container的IP位置",
+            content: "input",
+            button: {
+                text: "停止!",
+                closeModal: false,
+            }
+        }).then((inputValue) => {
+            if (inputValue === false) return false;
 
-                if (inputValue === "") {
-                    swal.showInputError("請輸入需關閉container的IP");
-                    return false
+            if (inputValue === "") {
+                swal.showInputError("請輸入需關閉container的IP");
+                return false
+            }
+            $.ajax({
+                type: "post",
+                url: inputValue + '/stop',
+                async: true,
+                data: JSON.stringify({
+                    idAddress: address
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    swal(inputValue + "的container已停止", data.status, "success");
+
+                    $.ajax({
+                        type: "post",
+                        url: dataAPI + '/stopWatch',
+                        async: true,
+                        data: JSON.stringify({
+                            idAddress: address
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            swal("container已停止&監聽關閉", data.status, "success")
+                        }
+                    });
                 }
-
-                 // swal("非常好！", "你输入了：" + inputValue, "success");
-
-                $.ajax({
-                    type: "post",
-                    url: inputValue + '/stop',
-                    async: true,
-                    data: JSON.stringify({
-                        idAddress: address
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data) {
-                        swal(inputValue + "的container已停止", data.status, "success");
-
-                        $.ajax({
-                            type: "post",
-                            url: dataAPI + '/stopWatch',
-                            async: true,
-                            data: JSON.stringify({
-                                idAddress: address
-                            }),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function (data) {
-                                swal("container已停止&監聽關閉", data.status, "success")
-                            }
-                        });
-                    }
-                });
             });
-
-
-        // $.ajax({
-        //     type: "post",
-        //     url: dataAPI + '/stopWatch',
-        //     async: true,
-        //     data: JSON.stringify({
-        //         idAddress: address
-        //     }),
-        //     contentType: "application/json; charset=utf-8",
-        //     dataType: "json",
-        //     success: function (dataJSON) {
-        //         let data = JSON.parse(dataJSON.toString());
-        //         swal("監聽關閉", data.status, "success")
-        //     }
-        // });
-        // $.ajax({
-        //     type: "post",
-        //     url: piAPI + '/stop',
-        //     async: true,
-        //     data: JSON.stringify({
-        //         idAddress: address
-        //     }),
-        //     contentType: "application/json; charset=utf-8",
-        //     dataType: "json",
-        //     success: function (data) {
-        //         alert(data.status);
-        //     }
-        // });
+        });
     }
 
     $(function () {
@@ -242,7 +204,6 @@
                 // console.log(k, data[k]);
                 listSet.push([`<a href="/container?id=${data[k].Id}" >${data[k].Id}</a>`, `<a href="/container?id=${data[k].Id}" >${data[k].Contract_Address}</a>`, `<button class="btn btn-primary" onclick="triggerStart('${data[k].Contract_Address}')">Start</button>`, `<button class="btn btn-primary" onclick="triggerStop('${data[k].Contract_Address}')">Stop</button>`]);
             }
-            // console.log(dataSet)
 
             // 設定好表格的欄位
             $(document).ready(function () {
