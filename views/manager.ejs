@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
     <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
     <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+        <script type="text/javascript" src="javascripts/browserMqtt.js"></script>
     <script type="text/javascript" src="javascripts/jquery-3.2.1.min.js"></script>
     <!--選取範圍日期用套件-->
     <script type="text/javascript" src="bower_components/moment/moment.js"></script>
@@ -115,7 +116,34 @@
                 }
 
                  // swal("非常好！", "你输入了：" + inputValue, "success");
+                let client = mqtt.connect('ws://140.119.163.195:10000') // you add a ws:// url here
+                client.subscribe("itriAddress/response");
+                client.on("message", function (topic, msg) {
+                	let data=JSON.parse(msg.toString());
+		    	if(data.ip===inputValue && data.status ==="start"){
+                        	swal("container已啟動&監聽啟用", msg.toString(), "success"); 
+                        	client.end();  
+			$.ajax({
+                            type: "post",
+                            url: dataAPI + '/startWatch',
+                            async: true,
+                            data: JSON.stringify({
+                                idAddress: address
+                            }),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (data) {
 
+                                swal("container已啟動&監聽啟用", data.status, "success")
+                            }
+                        });
+                    	}
+                });
+		let obj={};
+		obj.ip=inputValue+":start";
+		obj.idAddress=address;
+                client.publish("itriAddress/request",JSON.stringify(obj));
+                // ----------use at LAN
                 $.ajax({
                     type: "post",
                     url: inputValue + '/start',
@@ -144,8 +172,9 @@
                         });
                     }
                 });
+                
             });
-
+            
 
     }
 
@@ -168,7 +197,34 @@
                 }
 
                  // swal("非常好！", "你输入了：" + inputValue, "success");
+                    let client = mqtt.connect('ws://140.119.163.195:10000') // you add a ws:// url here
+                    let obj={};
+		    obj.ip=inputValue+":stop";
+		    obj.idAddress=address;
 
+		    client.subscribe("itriAddress/response");
+                    client.on("message", function (topic, msg) {
+                        let data=JSON.parse(msg.toString());
+		    	if(data.ip===inputValue && data.status ==="stop"){
+                            	//swal("container已停止&監聽關閉", data.status, "success")
+				client.end(); 
+				$.ajax({
+	                            type: "post",
+        	                    url: dataAPI + '/stopWatch',
+                	            async: true,
+                        	    data: JSON.stringify({
+                                	idAddress: address
+	                            }),
+        	                    contentType: "application/json; charset=utf-8",
+                	            dataType: "json",
+                        	    success: function (data) {
+                                	swal("container已停止&監聽關閉", data.status, "success")
+                            	}
+                        	});
+
+                    	}	
+                    });
+                    client.publish("itriAddress/request",JSON.stringify(obj));
                 $.ajax({
                     type: "post",
                     url: inputValue + '/stop',

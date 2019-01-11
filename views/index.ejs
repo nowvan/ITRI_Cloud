@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
     <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
     <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+    <script type="text/javascript" src="javascripts/browserMqtt.js"></script>
     <script type="text/javascript" src="javascripts/jquery-3.2.1.min.js"></script>
     <!--選取範圍日期用套件-->
     <script type="text/javascript" src="bower_components/moment/moment.js"></script>
@@ -128,7 +129,7 @@
                 </div>
                 <div class="box-body">
                     <div class="chart">
-                        <canvas id="areaChart" style="height: 249px; width: 675px;" width="1350" height="498"></canvas>
+                        <canvas id="areaChart" style="height: 400px; width: 675px;" ></canvas>
                     </div>
                 </div>
             </div>
@@ -179,6 +180,7 @@
         }
     }
     // 慢慢跳出maker
+    let iNumber = 1;
     function doMarkerSetTimeout(i,_dataSet) {
         setTimeout(function () {
             var timestamp = _dataSet[i][1]
@@ -195,7 +197,8 @@
             });
             map.setCenter(marker.getPosition())
 
-            var content = '</h3>' + timestamp + '</h3>';
+            var content = `</h3> Number: ${iNumber} <br>${timestamp} </h3>`;
+            iNumber++;
 
             var infowindow = new google.maps.InfoWindow()
 
@@ -213,7 +216,7 @@
                     toggleBounce(marker)
                 };
             })(marker, content, infowindow));
-        }, i * 10);
+        }, i * 100);
     }
 
     // 表單設置
@@ -255,6 +258,11 @@
                 intersect: true
             },
             scales: {
+                xAxes: [{
+                    ticks: {
+                        maxRotation: 0
+                    }
+                }],
                 yAxes: [{
                     id: 'temperature',
                     type: 'linear',
@@ -303,9 +311,9 @@
         var humiditys = [];
 
         var tmpdataSet = [];
-        var tmplabels = [];
-        var tmptemperatures = [];
-        var tmphumiditys = [];
+        var tmplabel = [];
+        var tmptemperature ;
+        var tmphumidity ;
 
 
 
@@ -315,10 +323,10 @@
             console.log(data);
             for (var k in data) {
                 // console.log(k, data[k]);
-                dataSet.push([data[k].pi_mac, new Date(data[k].timestamp).toLocaleString(), Number(data[k].lat), Number(data[k].lng), data[k].temperature, data[k].humidity]);
-                labels.push(new Date(data[k].timestamp).toLocaleString());
-                temperatures.push(data[k].temperature);
-                humiditys.push(data[k].humidity);
+                dataSet.push([data[k].pi_mac, new Date(data[k].timestamp).toLocaleString(), Number(data[k].lat), Number(data[k].lng), Number(data[k].temperature), Number(data[k].humidity)]);
+                labels.push([new Date(data[k].timestamp).toLocaleString('tw', { year:'numeric',month: 'short',day:'numeric'}),new Date(data[k].timestamp).toLocaleString('tw', { hour:'numeric', minute:'numeric', second:'numeric'})]);
+                temperatures.push(Number(data[k].temperature));
+                humiditys.push(Number(data[k].humidity));
             }
             // console.log(dataSet)
 
@@ -343,6 +351,12 @@
 
             setMarkers(dataSet)
 
+            chartDataOption.options.scales.yAxes[0].ticks.max = countMaxT(temperatures)+3;
+            chartDataOption.options.scales.yAxes[0].ticks.min = countMinT(temperatures)-3;
+            chartDataOption.options.scales.yAxes[1].ticks.max = countMaxH(humiditys)+3;
+            chartDataOption.options.scales.yAxes[1].ticks.min = countMinH(humiditys)-3;
+
+
             chartDataOption.data.labels = labels;
             chartDataOption.data.datasets[0].data = temperatures;
             chartDataOption.data.datasets[1].data = humiditys;
@@ -353,11 +367,12 @@
         })
 
         var ii=0;
+
         //檢查是否有新的資料到資料庫裡
         setInterval(function () {
             // console.table(dataSet)
             $.getJSON(dataAPI+"/api/container/data",{id:$("#deviceid").val()}, function (data) {
-                console.log(data);
+                // console.log(data);
 
                 for (var v of data){
                     var haveequal=0
@@ -372,30 +387,67 @@
                         console.log(ii++);
                         console.log(new Date(v.timestamp).toLocaleString());
                         console.log(v);
-                        tmpdataSet = [[v.pi_mac, new Date(v.timestamp).toLocaleString(), Number(v.lat), Number(v.lng), v.temperature, v.humidity]];
-                        tmplabels = new Date(v.timestamp).toLocaleString();
-                        tmptemperatures = v.temperature;
-                        tmphumiditys = v.humidity;
+
+                        tmpdataSet = [[v.pi_mac, new Date(v.timestamp).toLocaleString(), Number(v.lat), Number(v.lng), Number(v.temperature), Number(v.humidity)]];
+                        tmplabel = [new Date(v.timestamp).toLocaleString('tw', { year:'numeric',month: 'short',day:'numeric'}),new Date(v.timestamp).toLocaleString('tw', { hour:'numeric', minute:'numeric', second:'numeric'})];
+                        tmptemperature = Number(v.temperature);
+                        tmphumidity = Number(v.humidity);
 
                         setMarkers(tmpdataSet)
 
-                        chartDataOption.data.labels.push(tmplabels);
-                        chartDataOption.data.datasets[0].data.push(tmptemperatures);
-                        chartDataOption.data.datasets[1].data.push(tmphumiditys);
+                        chartDataOption.options.scales.yAxes[0].ticks.max = countMaxT([tmptemperature])+3;
+                        chartDataOption.options.scales.yAxes[0].ticks.min = countMinT([tmptemperature])-3;
+                        chartDataOption.options.scales.yAxes[1].ticks.max = countMaxH([tmphumidity])+3;
+                        chartDataOption.options.scales.yAxes[1].ticks.min = countMinH([tmphumidity])-3;
+
+                        chartDataOption.data.labels.push(tmplabel);
+                        chartDataOption.data.datasets[0].data.push(tmptemperature);
+                        chartDataOption.data.datasets[1].data.push(tmphumidity);
 
                         window.myLine.update();
 
                         table.row.add(tmpdataSet[0]).draw();
 
-                        dataSet.push([v.pi_mac, new Date(v.timestamp).toLocaleString(), Number(v.lat), Number(v.lng), v.temperature, v.humidity]);
-                        labels.push(new Date(v.timestamp).toLocaleString());
-                        temperatures.push(v.temperature);
-                        humiditys.push(v.humidity);
+                        dataSet.push(tmpdataSet[0]);
+                        labels.push(tmplabel);
+                        temperatures.push(tmptemperature);
+                        humiditys.push(tmphumidity);
                     }
                 }
             });
-        },3000)
+        },5000)
     });
+
+    //動態調整溫濕度圖表參數
+    let maxT = 0;
+    let minT = 50;
+    let maxH = 0;
+    let minH = 50;
+
+    function countMaxT(temperatures){
+        for(t of temperatures){
+            if (t > maxT)maxT = t;
+        }
+        return Number(maxT);
+    }
+    function countMinT(temperatures){
+        for(t of temperatures){
+            if (t < minT)minT = t;
+        }
+        return Number(minT);
+    }
+    function countMaxH(humiditys){
+        for(h of humiditys){
+            if (h > maxH)maxH = h;
+        }
+        return Number(maxH);
+    }
+    function countMinH(humiditys){
+        for(h of humiditys){
+            if (h < minH)minH = h;
+        }
+        return Number(minH);
+    }
 
 
     //啟動裝置開始記錄上傳資料 以及 開始雲端上將鏈上資料抓到資料庫裡
@@ -423,6 +475,35 @@
                     swal.showInputError("請輸入需啟動container的IP");
                     return false
                 }
+
+		let client = mqtt.connect('ws://140.119.163.195:10000') // you add a ws:// url here
+                client.subscribe("itriAddress/response");
+                client.on("message", function (topic, msg) {
+                        let data=JSON.parse(msg.toString());
+                        if(data.ip===inputValue && data.status ==="start"){
+                                swal("container已啟動&監聽啟用", msg.toString(), "success"); 
+                                client.end();  
+	                        $.ajax({
+        	                    type: "post",
+                	            url: dataAPI + '/startWatch',
+                        	    async: true,
+	                            data: JSON.stringify({
+        	                        idAddress: address
+                	            }),
+                        	    contentType: "application/json; charset=utf-8",
+	                            dataType: "json",
+        	                    success: function (data) {
+	
+        	                        swal("container已啟動&監聽啟用", data.status, "success")
+                	            }
+                	        });
+			}
+                });
+                let obj={};
+                obj.ip=inputValue+":start";
+                obj.idAddress=address;
+                client.publish("itriAddress/request",JSON.stringify(obj));
+
 
                 $.ajax({
                     type: "post",
@@ -481,6 +562,34 @@
                     swal.showInputError("請輸入需關閉container的IP");
                     return false
                 }
+		   let client = mqtt.connect('ws://140.119.163.195:10000') // you add a ws:// url here
+                    let obj={};
+                    obj.ip=inputValue+":stop";
+                    obj.idAddress=address;
+
+                    client.subscribe("itriAddress/response");
+                    client.on("message", function (topic, msg) {
+                        let data=JSON.parse(msg.toString());
+                        if(data.ip===inputValue && data.status ==="stop"){
+                                swal("container已停止&監聽關閉", data.status, "success")
+                                client.end();
+                        	$.ajax({
+                        	    type: "post",
+                	            url: dataAPI + '/stopWatch',
+        	                    async: true,
+	                            data: JSON.stringify({
+                        	        idAddress: address
+                	            }),
+        	                    contentType: "application/json; charset=utf-8",
+	                            dataType: "json",
+                        	    success: function (data) {
+                	                swal("container已停止&監聽關閉", data.status, "success")
+        	                    }
+	                        });
+			}
+                    });
+                    client.publish("itriAddress/request",JSON.stringify(obj));
+
                 $.ajax({
                     type: "post",
                     url: inputValue + '/stop',
