@@ -111,7 +111,6 @@ function createNew() {
 
     var dataAPI = 'http://140.119.163.196:3000';
 
-
     //創建新合約成功回傳後才能夠繼續操作
     $.ajax({
         type: "post",
@@ -123,7 +122,14 @@ function createNew() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function(data) {
-            swal("創建合約成功", "data！", "success")
+            console.log(data);
+            console.log(data.ID);
+            if(!data.err){
+                swal("創建合約成功", `ID: ${data.ID} address: ${data.address} totalnumber: ${data.totalnumber}`, "success");
+            }else{
+                swal("創建合約失敗", `err: ${data.err}`, "error");
+            }
+
             $("#waitＭodal").modal('hide')
         }
     });
