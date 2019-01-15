@@ -1,5 +1,5 @@
 const db = require('./connection_db');
-
+let dateTime = require('node-datetime');
 
 class backend{
 
@@ -122,9 +122,93 @@ class backend{
                 });
 
     }
+	registryDevice(req, res, next){
+		let mac=req.body.mac;
+		let checkSql=`SELECT * FROM AllDeives WHERE macAddress='${mac}'`;
+		let dt = dateTime.create();
+		let formatted = dt.format('Y-m-d H:M:S');
+		db.query(checkSql,function(err,respond){
+                    if(err){
+                        res.write("false");
+                        res.end();
+                    }else{
+			    if(respond.length == 0){
+				    let insertSql=`INSERT INTO AllDeives(macAddress) VALUES ('${mac}')`;
+				    db.query(insertSql,function(err,respond){
+					res.write('true');
+                        		res.end();    
+				    });
+			    }else if(respond.length == 1){
+				    let updateSql=`UPDATE AllDeives SET Date ='${formatted}' WHERE macAddress = '${mac}'`;
+				    db.query(updateSql,function(err,respond){
+					res.write('true');
+                        		res.end();    
+				    });
 
-
-
+			    }else{
+			 	res.write("false");
+                        	res.end();   
+			    }
+                    }
+                });
+	}
+	getAllDevice(req, res, next){
+		let sql=`SELECT * FROM AllDeives`;
+		let dt = dateTime.create();
+		let formatted = dt.format('Y-m-d H:M:S');
+		db.query(sql,function(err,respond){
+			if(err){
+				res.write("false");
+                        	res.end();
+			}else{
+				let device=[];
+				let allDevice=respond;
+				for(let i=0 ; i< allDevice.length ; i++){
+					let deviceDate = new Date(allDevice[i].Date);
+					let serverDate = new Date(formatted);
+					console.log(serverDate-deviceDate)
+					if(serverDate-deviceDate<120000)
+						device.push(allDevice[i].macAddress);
+				}
+				if(device.length==0)
+					res.write("false");
+				else
+					res.write(JSON.stringify(device));
+				
+				res.end();
+			}	
+		});
+	}
+	searchMission(req, res, next){
+		let mac=req.query.mac;
+		let sql=`SELECT * FROM InvoiceOfTracker WHERE mac='${mac}' and status='start'`;
+		db.query(sql,function(err,respond){
+			if(err){
+				res.write("false");
+                        	res.end();
+			}else{
+				let obj={};
+				if(respond.length==0){
+					obj.status="false";
+					res.write(JSON.stringify(obj));
+					res.end();
+				}else{
+					obj.status="true";
+					let getaddress=`SELECT Contract_Address FROM IdMapContract WHERE Id='${respond[0].id}'`;
+					db.query(getaddress,function(err,respond){
+						if(err){
+							res.write("false");
+							res.end();		
+						}else{
+							obj.Contract_Address=respond[0].Contract_Address;
+							res.write(JSON.stringify(obj));
+							res.end();
+						}
+					});
+				}
+			}
+		});
+	}
 }
 
 module.exports = backend;
