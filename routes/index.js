@@ -16,10 +16,16 @@ router.post('/startWatch',serverDB.startWatch);
 router.post('/stopWatch',serverDB.stopWatch)
 router.get('/api/container/data',backend.getDataById);
 router.post('/save',backend.save);
-router.get('/api/containerlist',backend.containerlist);
-router.get('/api/container',backend.getAddressById);
+router.get('/api/containerlist',backend.getDataById);
+router.get('/api/container',backend.getDataById);
 
+// router for device
+
+router.post('/registerDevice',backend.registryDevice);
+router.get('/getAllDevice',backend.getAllDevice);
+router.get('/getAllMission',backend.searchMission);
 //router for web
+
 router.get('/',function(req, res , next){
     res.render('manager',{  });
 });
@@ -43,6 +49,8 @@ router.get('/container', function(req, res, next) {
 router.get('/registerid', function(req, res, next) {
     res.render('registerid', { });
 });
+
+
 
 
 module.exports = router;
