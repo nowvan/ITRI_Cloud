@@ -10,16 +10,29 @@ let createNew = new CreateNew();
 let serverDB = new ServerDB();
 let backend = new Backend();
 
-//router for api
+//router for eth
 router.post('/CreateNew',createNew.create);
-router.post('/startWatch',serverDB.startWatch);
-router.post('/stopWatch',serverDB.stopWatch)
+router.put('/startWatch',serverDB.startWatch);
+router.put('/stopWatch',serverDB.stopWatch)
 router.get('/api/container/data',backend.getDataById);
 router.post('/save',backend.save);
-router.get('/api/containerlist',backend.containerlist);
-router.get('/api/container',backend.getAddressById);
+router.get('/api/containerlist',backend.getDataById);
+router.get('/api/container',backend.getDataById);
+
+// router for device
+
+router.post('/registerDevice',backend.registryDevice);
+router.get('/getAllDevice',backend.getAllDevice);
+router.get('/getAllMission',backend.searchMission);
+router.post('/startContainer',backend.startContainer);
+router.post('/stopContainer',backend.stopContainer);
+router.get('/startMission',backend.startMission);
+router.put('/resetDevice',backend.resetDevice);
+router.put('/startDevice',backend.startDevice);
+router.put('/stopDevice',backend.stopDevice);
 
 //router for web
+
 router.get('/',function(req, res , next){
     res.render('manager',{  });
 });
@@ -43,6 +56,8 @@ router.get('/container', function(req, res, next) {
 router.get('/registerid', function(req, res, next) {
     res.render('registerid', { });
 });
+
+
 
 
 module.exports = router;

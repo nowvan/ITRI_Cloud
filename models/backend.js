@@ -1,9 +1,8 @@
 const db = require('./connection_db');
-
+let dateTime = require('node-datetime');
 
 class backend{
-//輸入id將回傳所有此id所有資料
-//如果加上輸入timestamp就會回傳特定時間區間的資料
+
     getDataById(req, res, next) {
          console.log(req.query);
         // console.log(req.query.timestampstart);
@@ -16,7 +15,7 @@ class backend{
                             res.json(ressql);
                         }
                         else if(!err && ressql.length === 0){
-                            res.json({err:"ContainerError"});
+                            res.json("ContainerError");
                         }
                         else{
                             console.log(err);
@@ -46,7 +45,34 @@ class backend{
                     }
         }
     }
-//回傳所有已註冊的id以及address
+
+    // getDataByIdTime(req, res, next) {
+    //     // console.log(req.query);
+    //     let conn=mysql.createConnection({
+    //         host:"127.0.0.1",
+    //         user:"pi",
+    //         password:"nccutest",
+    //         database:"ITRIProject"
+    //     });
+    //     conn.connect(function(err){
+    //
+    //         if(!err){
+    //             let sql=`SELECT * FROM container WHERE id = '${req.query.id}' AND timestamp BETWEEN '${req.query.timestampstart}' AND '${req.query.timestampend}' `;
+    //             conn.query(sql,function(err,ressql){
+    //                 if(!err){
+    //                     console.log("ressql: "+ressql);
+    //                     res.send(JSON.stringify(ressql));
+    //
+    //                 }
+    //                 else{
+    //                     console.log(err);
+    //                 }
+    //                 conn.end();
+    //             });
+    //         }
+    //     });
+    // }
+
     containerlist(req, res, next) {
 
             console.log(req.query.id);
@@ -61,7 +87,7 @@ class backend{
                     }
                 });
     }
-//輸入id回傳address
+
     getAddressById(req, res, next) {
         console.log(req.query.id);
         let sql=`SELECT Contract_Address FROM IdMapContract WHERE Id = "${req.query.id}"`;
@@ -75,7 +101,7 @@ class backend{
             }
         });
     }
-//資料儲存至資料庫的api
+
     save(req,response){
 
         let data=JSON.parse(req.body.data);
@@ -96,9 +122,305 @@ class backend{
                 });
 
     }
+	registryDevice(req, res, next){
+		let mac=req.body.mac;
+		let checkSql=`SELECT * FROM AllDeives WHERE macAddress='${mac}'`;
+		let dt = dateTime.create();
+		let formatted = dt.format('Y-m-d H:M:S');
+		db.query(checkSql,function(err,respond){
+                    if(err){
+                        res.write("false");
+                        res.end();
+                    }else{
+			    if(respond.length == 0){
+				    let insertSql=`INSERT INTO AllDeives(macAddress) VALUES ('${mac}')`;
+				    db.query(insertSql,function(err,respond){
+					res.write('true');
+                        		res.end();    
+				    });
+			    }else if(respond.length == 1){
+				    let updateSql=`UPDATE AllDeives SET Date ='${formatted}' WHERE macAddress = '${mac}'`;
+				    db.query(updateSql,function(err,respond){
+					res.write('true');
+                        		res.end();    
+				    });
 
+			    }else{
+			 	res.write("false");
+                        	res.end();   
+			    }
+                    }
+                });
+	}
+	getAllDevice(req, res, next){
+		let sql=`SELECT * FROM AllDeives`;
+		let dt = dateTime.create();
+		let formatted = dt.format('Y-m-d H:M:S');
+		db.query(sql,function(err,respond){
+			if(err){
+				res.write("false");
+                        	res.end();
+			}else{
+				let device=[];
+				let allDevice=respond;
+				for(let i=0 ; i< allDevice.length ; i++){
+					let deviceDate = new Date(allDevice[i].Date);
+					let serverDate = new Date(formatted);
+					console.log(serverDate-deviceDate)
+					if(serverDate-deviceDate<120000)
+						device.push(allDevice[i].macAddress+`#${allDevice[i].status}`);
+				}
+				if(device.length==0)
+					res.write("false");
+				else
+					res.write(JSON.stringify(device));
+				
+				res.end();
+			}	
+		});
+	}
+	searchMission(req, res, next){
+		let mac=req.query.mac;
+		let sql=`SELECT * FROM InvoiceOfTracker WHERE mac='${mac}' and status='start'`;
+		db.query(sql,function(err,respond){
+			let obj={};
+			if(err){
+				obj.status="false";
+				res.write(JSON.stringify(obj));
+                        	res.end();
+			}else{
+				if(respond.length==0){
+					obj.status="false";
+					res.write(JSON.stringify(obj));
+					res.end();
+				}else{
+					obj.status="true";
+					let getaddress=`SELECT Contract_Address FROM IdMapContract WHERE Id='${respond[0].id}'`;
+					db.query(getaddress,function(err,respond){
+						if(err){
+							obj.status="false";
+							res.write(JSON.stringify(obj));
+							res.end();		
+						}else{
+							obj.Contract_Address=respond[0].Contract_Address;
+							res.write(JSON.stringify(obj));
+							res.end();
+						}
+					});
+				}
+			}
+		});
+	}
+	startContainer(req, res, next){
+		let address = req.body.idAddress;
+		let mac= req.body.mac;
+		let searchId=`SELECT * FROM IdMapContract WHERE Contract_Address="${address}"`;
+		let obj={};
+		db.query(searchId,function(err,respond){
+			if(err){
+				obj.status="false";
+				res.write(JSON.stringify(obj));
+                        	res.end();
+			}else{
+				if(respond.length==0){
+					obj.status="false";
+					res.write(JSON.stringify(obj));
+					res.end();
+				}else{
+					obj.status="true";
+					let Id=respond[0].Id;
+					let checkSql=`SELECT mac, id, status FROM InvoiceOfTracker WHERE mac='${mac}' and id ='${Id}'`;
+					console.log(checkSql)
+					db.query(checkSql,function(err,respond){
+						if(err){
+							obj.status="false";
+							res.write(JSON.stringify(obj));
+							res.end();		
+						}else{
+							let promise=new Promise(function(resolve){		
+								let checkDevice=`SELECT * FROM AllDeives WHERE macAddress = '${mac}'`;
+								console.log(checkDevice);
+								db.query(checkDevice,function(err,respond){
+									if(err)
+										resolve({flag:false});
+									else{
+										let flag="true";
+										if(respond.length==0){
+											resolve({flag:false});
+										}else{
+											if(respond[0].status==null || respond[0].status=="null")
+												resolve({flag:true});
+											else
+												resolve({flag:false});
+										
+										}
+									}
+									
+								});
+							});
+							promise.then(function(full){
+								if(full.flag==true){
+									if(respond.length == 0){
+										let insertStartCmd=`INSERT INTO InvoiceOfTracker (mac, id, status) VALUES ('${mac}','${Id}','start')`;
+										db.query(insertStartCmd,function(err,respond){});
+									}else{
+										let update=`UPDATE InvoiceOfTracker SET status='start' WHERE id='${Id}'`;
+										db.query(update,function(err,respond){});
+									}
+								}else{
+									obj.status="false";	
+								}
+								res.write(JSON.stringify(obj));
+								res.end();
+							});
+							
+						}
+					});
+				}
+			}
+		});
+	}
+	stopContainer(req, res, next){
+		let address = req.body.idAddress;
+		let mac= req.body.mac;
+		let searchId=`SELECT * FROM IdMapContract WHERE Contract_Address="${address}"`;
+		let obj={};
+		db.query(searchId,function(err,respond){
+			if(err){
+				obj.status="false";
+				res.write(JSON.stringify(obj));
+                        	res.end();
+			}else{
+				if(respond.length==0){
+					obj.status="false";
+					res.write(JSON.stringify(obj));
+					res.end();
+				}else{
+					obj.status="true";
+					let Id=respond[0].Id;
+					let checkSql=`SELECT mac, id, status FROM InvoiceOfTracker WHERE mac='${mac}' and id ='${Id}'`;
+					console.log(checkSql)
+					db.query(checkSql,function(err,respond){
+						if(err){
+							obj.status="false";
+							res.write(JSON.stringify(obj));
+							res.end();		
+						}else{
+							if(respond.length == 0){
+								let insertStartCmd=`INSERT INTO InvoiceOfTracker (mac, id, status) VALUES ('${mac}','${Id}','stop')`;
+								db.query(insertStartCmd,function(err,respond){});
+							}else{
+								let update=`UPDATE InvoiceOfTracker SET status='stop' WHERE id='${Id}'`;
+								db.query(update,function(err,respond){});
+							}
+							res.write(JSON.stringify(obj));
+							res.end();
+						}
+					});
+				}
+			}
+		});
+	}
+	resetDevice(req, res, next){
+		let mac= req.body.mac;	
+		let updateDevice=`UPDATE AllDeives SET status='null' WHERE macAddress='${mac}'`;
+		console.log(updateDevice);
+		let allInvoce=`SELECT * FROM InvoiceOfTracker WHERE mac ='${mac}'`;
+		console.log(allInvoce);
+		db.query(updateDevice,function(err,respond){
+			let obj={};
+			if(err){
+				obj.status="false";
+				res.write(JSON.stringify(obj));
+				res.end();	
+			}else{
+				obj.status="true";
+				db.query(allInvoce,function(err,respond){
+					if(err){
+						obj.status="false";
+						res.write(JSON.stringify(obj));
+						res.end();
+					}else{
+						for(let i = 0 ; i<respond.length ; i++){
+							let updateInvoce=`UPDATE InvoiceOfTracker SET status='stop' WHERE index_invoice= ${respond[i].index_invoice}`;
+							console.log(updateInvoce)
+							db.query(updateInvoce,function(err,respond){
+								if(err)
+									obj.status="false";
+							});
+						}
+						res.write(JSON.stringify(obj));
+						res.end();
+					}	
+				});	
+			}
+		});
 
-
+	}
+	startMission(req, res, next){
+		let mac= req.query.mac;
+		let allmission=`SELECT * FROM IdMapContract WHERE (SELECT id FROM InvoiceOfTracker WHERE mac='${mac}' and status='start')=Id`;
+		let obj={};
+		db.query(allmission,function(err,respond){
+			if(err){
+				obj.status="false";
+				res.write(JSON.stringify(obj));
+				res.end();
+			}else{
+				obj.status="true";
+				obj.missions=[];
+				for(let i =0 ; i<respond.length ; i++){
+					let mission={};
+					mission.Contract_Address=respond[i].Contract_Address;
+					obj.missions.push(mission);
+				}
+				res.write(JSON.stringify(obj));
+				res.end();
+			}	
+		});
+	}
+	startDevice(req, res, next){
+		let mac=req.body.mac;
+		let Contract_Address=req.body.Contract_Address;
+		let getContainerId=`SELECT id FROM container WHERE Contract_Address = '${Contract_Address}' GROUP by id`;
+		let obj={};
+		db.query(getContainerId,function(err,respond){
+			if(err){
+				obj.status="false";
+				res.write(JSON.stringify(obj));
+				res.end();
+			}else{
+				obj.status="true";
+				let updateDevice=`UPDATE AllDeives SET status='${respond[0].id}' WHERE macAddress='${mac}'`;
+				db.query(updateDevice,function(err,respond){
+					if(err){
+						obj.status="false";
+					}else{
+						res.write(JSON.stringify(obj));
+						res.end();	
+					}
+				});
+			}
+		});
+		
+	}
+	stopDevice(req, res, next){
+		let mac=req.body.mac;
+		let Contract_Address=req.body.Contract_Address;
+		let updateDevice=`UPDATE AllDeives SET status='null' WHERE macAddress='${mac}'`;
+		let obj={};
+		db.query(updateDevice,function(err,respond){
+			if(err){
+				obj.status="false";
+				res.write(JSON.stringify(obj));
+				res.end();
+			}else{
+				obj.status="true";
+				res.write(JSON.stringify(obj));
+				res.end();	
+			}
+		});
+	}
 }
 
 module.exports = backend;
