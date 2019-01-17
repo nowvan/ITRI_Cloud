@@ -104,59 +104,64 @@
         // alert("Start contract : "+address)
 	    let promise=new Promise(function(resolve){
 	    
-	swal({
-                title: "啟動container",
-		text: " ",
+    	    swal({
+                    title: "啟動container",
+    		text: " ",
                 content: "input",
                 button: {
                     text: "啟動!",
                     closeModal: false,
                 }
 
-        }).then((inputValue)=>{
-                if (inputValue === false) return false;
+            }).then((inputValue)=>{
+                    if (inputValue === false) return false;
 
-                if (inputValue === "") {
-                    swal.showInputError("請輸入需啟動container的IP");
-                    return false
-                }
-		                 // swal("非常好！", "你输入了：" + inputValue, "success");
-                $.ajax({
-                    type: "post",
-                    url:"http://140.119.163.196:3000/startContainer",
-                    async: true,
-                    data: JSON.stringify({
-                        idAddress: address,
-			mac:inputValue
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data) {
-                        swal(inputValue + "的container已啟動", data.status, "success");
-
-                        $.ajax({
-                            type: "post",
-                            url: dataAPI + '/startWatch',
-                            async: true,
-                            data: JSON.stringify({
-                                idAddress: address
-                            }),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function (data) {
-                                swal("container已啟動&監聽啟用", data.status, "success")
-                            }
-                        });
+                    if (inputValue === "") {
+                        swal.showInputError("請輸入需啟動container的IP");
+                        return false
                     }
+    		                 // swal("非常好！", "你输入了：" + inputValue, "success");
+                    $.ajax({
+                        type: "post",
+                        url:dataAPI + "/startContainer",
+                        async: true,
+                        data: JSON.stringify({
+                            idAddress: address,
+    			            mac:inputValue
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+    			            console.log(data);
+                            let resStopContainer=data;
+                			if(resStopContainer.status=="true"){
+
+                				swal(inputValue + "的container已啟動", data.status, "success");
+                                	$.ajax({
+                        	            type: "put",
+                	                    url: dataAPI + '/startWatch',
+                                        async: true,
+                                	    data: JSON.stringify({
+                        	                idAddress: address
+                	                    }),
+                                        contentType: "application/json; charset=utf-8",
+                                	    dataType: "json",
+                        	            success: function (data) {
+                	                        swal("container已啟動&監聽啟用", data.status, "success")
+                                        }
+                                	});
+                			}else{
+                				swal("請重新檢查一次輸入的Mac Address");
+                			}
+                        }
+                    });
                 });
-                
-            });
-		resolve();
-	    })
+    		resolve();
+    	});
 	    promise.then(function(full){
 		    $('.swal-text').append(`<table id="allDevice" class="display" width="90%"></table>`);	
 			$.ajax({
-				url:"http://140.119.163.196:3000/getAllDevice",
+				url:dataAPI + "/getAllDevice",
 				method:'GET',
 				success:function(res){
 					let aliveDevice=[];
@@ -178,86 +183,93 @@
 				
 					$(".swal-content__input").attr("placeholder", "請輸入Mac Address 以啟動Container");
 				}
-				
 			});
 	    });
     }
 
     //關閉裝置開始記錄上傳資料 以及 結束雲端上將鏈上資料抓到資料庫裡
     function triggerStop(address) {
-        swal({
-                title: "關閉container",
-                text: "請輸入container的IP位置",
-                content: "input",
-                button: {
-                    text: "停止!",
-                    closeModal: false,
-             }
+	    let promise=new Promise(function(resolve){
+    	    swal({
+                    title: "關閉container",
+                    text: " ",
+                    content: "input",
+                    button: {
+                        text: "停止!",
+                        closeModal: false,
+                 }
             }).then((inputValue)=>{
-                if (inputValue === false) return false;
+                    if (inputValue === false) return false;
 
-                if (inputValue === "") {
-                    swal.showInputError("請輸入需關閉container的IP");
-                    return false
-                }
-
-                 // swal("非常好！", "你输入了：" + inputValue, "success");
-                    let client = mqtt.connect('ws://140.119.163.195:10000') // you add a ws:// url here
-                    let obj={};
-		    obj.ip=inputValue+":stop";
-		    obj.idAddress=address;
-
-		    client.subscribe("itriAddress/response");
-                    client.on("message", function (topic, msg) {
-                        let data=JSON.parse(msg.toString());
-		    	if(data.ip===inputValue && data.status ==="stop"){
-                            	//swal("container已停止&監聽關閉", data.status, "success")
-				client.end(); 
-				$.ajax({
-	                            type: "post",
-        	                    url: dataAPI + '/stopWatch',
-                	            async: true,
-                        	    data: JSON.stringify({
-                                	idAddress: address
-	                            }),
-        	                    contentType: "application/json; charset=utf-8",
-                	            dataType: "json",
-                        	    success: function (data) {
-                                	swal("container已停止&監聽關閉", data.status, "success")
-                            	}
-                        	});
-
-                    	}	
-                    });
-                    client.publish("itriAddress/request",JSON.stringify(obj));
-                $.ajax({
-                    type: "post",
-                    url: inputValue + '/stop',
-                    async: true,
-                    data: JSON.stringify({
-                        idAddress: address
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data) {
-                        swal(inputValue + "的container已停止", data.status, "success");
-
-                        $.ajax({
-                            type: "post",
-                            url: dataAPI + '/stopWatch',
-                            async: true,
-                            data: JSON.stringify({
-                                idAddress: address
-                            }),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function (data) {
-                                swal("container已停止&監聽關閉", data.status, "success")
-                            }
-                        });
+                    if (inputValue === "") {
+                        swal.showInputError("請輸入需關閉container的Mac Address");
+                        return false
                     }
-                });
+
+                    $.ajax({
+                        type: "post",
+                        url:   dataAPI + "/stopContainer",
+                        async: true,
+                        data: JSON.stringify({
+                            idAddress: address,
+    			            mac:inputValue
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+    			            let resStopContainer=data;
+            			    if(resStopContainer.status=="true"){
+                			    swal(inputValue + "的container已停止", data.status, "success");
+
+        	                        $.ajax({
+                	                    type: "put",
+                        	            url: dataAPI + '/stopWatch',
+                                	    async: true,
+        	                            data: JSON.stringify({
+                	                        idAddress: address
+                        	            }),
+                                	    contentType: "application/json; charset=utf-8",
+        	                            dataType: "json",
+                	                    success: function (data) {
+                        	                swal("container已停止&監聽關閉", data.status, "success")
+                                	    }
+        	                        });
+                    		}else{
+                    			swal("請重新檢查一次輸入的Mac Address");
+                    		}
+                        }
+                    });
             });
+    		resolve();
+	    });
+	    promise.then(function(full){
+	    	$('.swal-text').append(`<table id="allDevice" class="display" width="90%"></table>`);	
+			$.ajax({
+				url:dataAPI + "/getAllDevice",
+				method:'GET',
+				success:function(res){
+					let aliveDevice=[];
+					let data=JSON.parse(res);
+					for(let i=0;i<data.length ;i++){
+						let status=data[i].split('#');
+						let mac=status[0];
+						status=status[1];
+
+						if(status=='null')
+							aliveDevice.push([mac,'alive']);
+						else
+							aliveDevice.push([mac,`${status} ID start`]);
+					
+					$('#allDevice').DataTable( {
+        					data: aliveDevice,
+						columns: [{ title: "Mac address" },{ title:"Status"}]});
+					}
+				
+					$(".swal-content__input").attr("placeholder", "請輸入Mac Address 以關閉Container");
+				}
+				
+			});
+	    })
 
 
         // $.ajax({
