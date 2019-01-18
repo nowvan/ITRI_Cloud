@@ -156,24 +156,29 @@ class backend{
 		let sql=`SELECT * FROM AllDeives`;
 		let dt = dateTime.create();
 		let formatted = dt.format('Y-m-d H:M:S');
+		let obj={};
 		db.query(sql,function(err,respond){
 			if(err){
-				res.write("false");
+				obj.status="false";
+				res.write(JSON.stringify(obj));
                         	res.end();
 			}else{
 				let device=[];
 				let allDevice=respond;
+				obj.status="true";
 				for(let i=0 ; i< allDevice.length ; i++){
 					let deviceDate = new Date(allDevice[i].Date);
 					let serverDate = new Date(formatted);
 					if(serverDate-deviceDate<120000)
 						device.push(allDevice[i].macAddress+`#${allDevice[i].status}`);
 				}
-				if(device.length==0)
-					res.write("false");
-				else
-					res.write(JSON.stringify(device));
-				
+				if(device.length==0){
+					obj.status="false";
+					res.write(JSON.stringify(obj));
+				}else{
+					obj.allDevice=device;
+					res.write(JSON.stringify(obj));
+				}
 				res.end();
 			}	
 		});
@@ -381,7 +386,8 @@ class backend{
 	startDevice(req, res, next){
 		let mac=req.body.mac;
 		let Contract_Address=req.body.Contract_Address;
-		let getContainerId=`SELECT id FROM container WHERE Contract_Address = '${Contract_Address}' GROUP by id`;
+		let getContainerId=`SELECT Id FROM IdMapContract WHERE Contract_Address = '${Contract_Address}'`
+		console.log(getContainerId);	
 		let obj={};
 		db.query(getContainerId,function(err,respond){
 			if(err){
@@ -390,7 +396,8 @@ class backend{
 				res.end();
 			}else{
 				obj.status="true";
-				let updateDevice=`UPDATE AllDeives SET status='${respond[0].id}' WHERE macAddress='${mac}'`;
+				let updateDevice=`UPDATE AllDeives SET status='${respond[0].Id}' WHERE macAddress='${mac}'`;
+				console.log(updateDevice)
 				db.query(updateDevice,function(err,respond){
 					if(err){
 						obj.status="false";

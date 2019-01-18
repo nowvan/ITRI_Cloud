@@ -166,22 +166,26 @@
 				success:function(res){
 					let aliveDevice=[];
 					let data=JSON.parse(res);
-					for(let i=0;i<data.length ;i++){
-						let status=data[i].split('#');
-						let mac=status[0];
-						status=status[1];
-
-						if(status=='null')
-							aliveDevice.push([mac,'alive']);
-						else
-							aliveDevice.push([mac,`${status} ID start`]);
+					if(data.status=="false"){
 					
-					$('#allDevice').DataTable( {
-        					data: aliveDevice,
-						columns: [{ title: "Mac address" },{ title:"Status"}]});
-					}
+					}else{
+						for(let i=0;i<data.allDevice.length ;i++){
+							let status=data.allDevice[i].split('#');
+							let mac=status[0];
+							status=status[1];
+	
+							if(status=='null')
+								aliveDevice.push([mac,'alive']);
+							else
+								aliveDevice.push([mac,`${status} ID start`]);
+					
+						$('#allDevice').DataTable( {
+        						data: aliveDevice,
+							columns: [{ title: "Mac address" },{ title:"Status"}]});
+						}
 				
-					$(".swal-content__input").attr("placeholder", "請輸入Mac Address 以啟動Container");
+						$(".swal-content__input").attr("placeholder", "請輸入Mac Address 以啟動Container");
+					}
 				}
 			});
 	    });
@@ -250,22 +254,26 @@
 				success:function(res){
 					let aliveDevice=[];
 					let data=JSON.parse(res);
-					for(let i=0;i<data.length ;i++){
-						let status=data[i].split('#');
-						let mac=status[0];
-						status=status[1];
-
-						if(status=='null')
-							aliveDevice.push([mac,'alive']);
-						else
-							aliveDevice.push([mac,`${status} ID start`]);
+					if(data.status=="false"){
 					
-					$('#allDevice').DataTable( {
-        					data: aliveDevice,
-						columns: [{ title: "Mac address" },{ title:"Status"}]});
-					}
+					}else{
+						for(let i=0;i<data.allDevice.length ;i++){
+							let status=data.allDevice[i].split('#');
+							let mac=status[0];
+							status=status[1];
+	
+							if(status=='null')
+								aliveDevice.push([mac,'alive']);
+							else
+								aliveDevice.push([mac,`${status} ID start`]);
+					
+						$('#allDevice').DataTable( {
+        						data: aliveDevice,
+							columns: [{ title: "Mac address" },{ title:"Status"}]});
+						}
 				
-					$(".swal-content__input").attr("placeholder", "請輸入Mac Address 以關閉Container");
+						$(".swal-content__input").attr("placeholder", "請輸入Mac Address 以關閉Container");
+					}
 				}
 				
 			});
