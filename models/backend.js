@@ -166,7 +166,6 @@ class backend{
 				for(let i=0 ; i< allDevice.length ; i++){
 					let deviceDate = new Date(allDevice[i].Date);
 					let serverDate = new Date(formatted);
-					console.log(serverDate-deviceDate)
 					if(serverDate-deviceDate<120000)
 						device.push(allDevice[i].macAddress+`#${allDevice[i].status}`);
 				}

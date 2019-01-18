@@ -326,7 +326,7 @@
 
         //將資料用ajax抓取後資料動態顯示在前端
         $.getJSON(dataAPI+"/api/container/data",{id:$("#deviceid").val()}, function (data) {
-
+	    console.log(dataAPI+"/api/containerlist",{id:$("#deviceid").val()})
             console.log(data);
             for (var k in data) {
                 // console.log(k, data[k]);
@@ -464,7 +464,7 @@
     	// });
 		$.getJSON(dataAPI + "/api/container",{id:id}, function (data) {
             console.log(data);
-            let address = data[0].Contract_Address;
+            let address = data.Contract_Address;
             console.log(address);
 			let promise=new Promise(function(resolve){
 	            swal({
@@ -489,7 +489,7 @@
 	                    async: true,
 	                    data: JSON.stringify({
 	                        idAddress: address,
-							mac:inputValue
+				mac:inputValue
 	                    }),
 	                    contentType: "application/json; charset=utf-8",
 	                    dataType: "json",
@@ -543,7 +543,7 @@
 							columns: [{ title: "Mac address" },{ title:"Status"}]});
 						}
 					
-						$(".swal-content__input").attr("placeholder", "請輸入Mac Address 以關閉Container");
+						$(".swal-content__input").attr("placeholder", "請輸入Mac Address 以開啟Container");
 					}
 				});
 			});
@@ -558,7 +558,7 @@
         $.getJSON(dataAPI + "/api/container",{id:id}, function (data) {
             console.log(data);
         	let promise=new Promise(function(resolve){
-			let address = data[0].Contract_Address;
+			let address = data.Contract_Address;
 			swal({
 	                title: "關閉container",
         	        text: " ",

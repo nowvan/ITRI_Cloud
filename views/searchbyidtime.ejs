@@ -143,14 +143,13 @@
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAprpUrbF7bXWIzEKLF0s8sRMi4lqs7uY8&callback=initMap">
 </script>
 <script>
-
-    //幾乎是index的翻版 只有差在多收到時間區間得資料 以及不用不斷得動態更新
     let dataAPI = 'http://140.119.163.196:3000';
-    let map;
-    let table;
+    var marker;
+    var map;
+    var table;
 
     function initMap() {
-        let myLatLng = {lat: 24.987088, lng: 121.573474};
+        var myLatLng = {lat: 24.987088, lng: 121.573474};
 
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 20,
@@ -172,7 +171,7 @@
 
 
 
-        for (let i = 0; i < _dataSet.length; i++) {
+        for (var i = 0; i < _dataSet.length; i++) {
             doMarkerSetTimeout(i,_dataSet);
         }
     }
@@ -181,13 +180,13 @@
     let iNumber = 1;
     function doMarkerSetTimeout(i,_dataSet) {
         setTimeout(function () {
-            let timestamp = _dataSet[i][1]
-            let lat = _dataSet[i][2]
-            let long = _dataSet[i][3]
+            var timestamp = _dataSet[i][1]
+            var lat = _dataSet[i][2]
+            var long = _dataSet[i][3]
 
             latlngset = new google.maps.LatLng(lat, long);
 
-            let marker = new google.maps.Marker({
+            var marker = new google.maps.Marker({
                 map: map,
                 title: timestamp,
                 position: latlngset,
@@ -195,9 +194,9 @@
             });
             map.setCenter(marker.getPosition())
 
-            let content = `</h3> Number: ${iNumber} <br>${timestamp} </h3>`;
+            var content = `</h3> Number: ${iNumber} <br>${timestamp} </h3>`;
             iNumber++;
-            let infowindow = new google.maps.InfoWindow()
+            var infowindow = new google.maps.InfoWindow()
 
             google.maps.event.addListener(marker, 'mouseover', (function (marker, content, infowindow) {
                 return function () {
@@ -216,7 +215,7 @@
         }, i * 10);
     }
 
-    let chartDataOption = {
+    var chartDataOption = {
         type: 'line',
         data:{
             labels: [],
@@ -299,10 +298,10 @@
 
     $(function () {
         initMap()
-        let dataSet = [];
-        let labels = [];
-        let temperatures = [];
-        let humiditys = [];
+        var dataSet = [];
+        var labels = [];
+        var temperatures = [];
+        var humiditys = [];
 
 
         //將資料用ajax抓取後動態顯示在前端
@@ -312,13 +311,14 @@
             timestampend:$( "#timeinterval" ).val().slice(22,46)
         }, function (data) {
             console.log(data);
-            for (let k in data) {
+            for (var k in data) {
                 // console.log(k, data[k]);
                 dataSet.push([data[k].pi_mac, new Date(data[k].timestamp).toLocaleString(), Number(data[k].lat), Number(data[k].lng), Number(data[k].temperature), Number(data[k].humidity)]);
                 labels.push(new Date(data[k].timestamp).toLocaleString());
                 temperatures.push(Number(data[k].temperature));
                 humiditys.push(Number(data[k].humidity));
             }
+            // console.log(dataSet)
 
             $(document).ready(function () {
                 table = $('#datatable').DataTable({
@@ -382,7 +382,7 @@
             chartDataOption.data.datasets[1].data = humiditys;
 
             // Get context with jQuery - using jQuery's .get() method.
-            let ChartCanvas = $('#areaChart').get(0).getContext('2d')
+            var ChartCanvas = $('#areaChart').get(0).getContext('2d')
             // This will get the first returned node in the jQuery collection.
             window.myLine = new Chart(ChartCanvas,chartDataOption);
         })

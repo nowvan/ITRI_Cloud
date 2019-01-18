@@ -16,8 +16,8 @@ router.put('/startWatch',serverDB.startWatch);
 router.put('/stopWatch',serverDB.stopWatch)
 router.get('/api/container/data',backend.getDataById);
 router.post('/save',backend.save);
-router.get('/api/containerlist',backend.getDataById);
-router.get('/api/container',backend.getDataById);
+router.get('/api/containerlist',backend.containerlist);
+router.get('/api/container',backend.getAddressById );
 
 // router for device
 
