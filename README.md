@@ -1,5 +1,3 @@
-#  itri_BP計劃 補充
-
 # 工研院計劃伺服器部分安裝説明
 ## 使用以太坊私有鏈版本
 *  Geth/v1.8.20-stable
@@ -116,7 +114,7 @@ npm start
 
 ###### tags: `blockchain`
 
-
+#  itri_BP計劃 補充
 ## 後端使用 node.js 
 - express 後端框架
 - mysql 連接資料庫
